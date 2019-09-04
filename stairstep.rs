@@ -32,17 +32,19 @@ enum Op {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, EnumString, Display)]
-enum Bool {
+enum ConstantSymbols {
     #[strum(serialize = "T")]
     True,
     #[strum(serialize = "F")]
     False,
     #[strum(serialize = "1")]
-    One, // this is janky as hell but there's no semantics here! these are just arbitrary symbols!
+    One,
+    #[strum(serialize = "0")]
+    Zero,
 }
 
 impl Language for HalideExpr {
-    type Constant = Bool; // for right now the only kind of constants are bools
+    type Constant = ConstantSymbols;
     type Operator = Op;
     type Variable = Name;
     type Wildcard = QuestionMarkName;
