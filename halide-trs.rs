@@ -18,13 +18,13 @@ enum Op {
   Sub,
   #[strum(serialize = "*")]
   Mul,
-  #[strum(serialize = "/")]
+  #[strum(serialize = "div")]
   Div,
   #[strum(serialize = "<")]
   Lt,
   #[strum(serialize = ">")]
   Gt,
-  #[strum(serialize = "%")]
+  #[strum(serialize = "mod")]
   Mod,
   #[strum(serialize = ">=")]
   Ge,
@@ -36,9 +36,9 @@ enum Op {
   Neq,
   #[strum(serialize = "not")]
   Not,
-  #[strum(serialize = "||")]
+  #[strum(serialize = "or")]
   Or,
-  #[strum(serialize = "&&")]
+  #[strum(serialize = "and")]
   And,
   #[strum(serialize = "max")]
   Max,
@@ -128,27 +128,27 @@ rule! {addrule69, "(+ ?x (- ?y ?x))", "?y"}
 rule! {addrule70, "(+ ?x (- ?c0 ?y))", "(+ (- ?x ?y) ?c0)"}
 rule! {addrule71, "(+ (- ?x ?y) (- ?y ?z))", "(- ?x ?z)"}
 rule! {addrule72, "(+ (- ?x ?y) (- ?z ?x))", "(- ?z ?y)"}
-conditional_rule! {addrule73, "(+ ?x (* ?y ?c0))", "(- ?x (* ?y (- ?c0)))", "(> (< ?c0 (&& 0 (- ?c0))) 0)", "T"}
+conditional_rule! {addrule73, "(+ ?x (* ?y ?c0))", "(- ?x (* ?y (- ?c0)))", "(> (< ?c0 (and 0 (- ?c0))) 0)", "T"}
 rule! {addrule75, "(+ (* ?x ?y) (* ?z ?y))", "(* (+ ?x ?z) ?y)"}
 rule! {addrule76, "(+ (* ?x ?y) (* ?y ?z))", "(* (+ ?x ?z) ?y)"}
 rule! {addrule77, "(+ (* ?y ?x) (* ?z ?y))", "(* ?y (+ ?x ?z))"}
 rule! {addrule78, "(+ (* ?y ?x) (* ?y ?z))", "(* ?y (+ ?x ?z))"}
-conditional_rule! {addrule79, "(+ (* ?x ?c0) (* ?y ?c1))", "(* (+ ?x (* ?y (/ ?c1 ?c0))) ?c0)", "(= (% ?c1 ?c0) 0)", "T"}
-conditional_rule! {addrule80, "(+ (* ?x ?c0) (* ?y ?c1))", "(* (+ (* ?x (/ ?c0 ?c1)) ?y) ?c1)", "(= (% ?c0 ?c1) 0)", "T"}
+conditional_rule! {addrule79, "(+ (* ?x ?c0) (* ?y ?c1))", "(* (+ ?x (* ?y (div ?c1 ?c0))) ?c0)", "(= (mod ?c1 ?c0) 0)", "T"}
+conditional_rule! {addrule80, "(+ (* ?x ?c0) (* ?y ?c1))", "(* (+ (* ?x (div ?c0 ?c1)) ?y) ?c1)", "(= (mod ?c0 ?c1) 0)", "T"}
 rule! {addrule82, "(+ ?x (* ?x ?y))", "(* ?x (+ ?y 1))"}
 rule! {addrule83, "(+ ?x (* ?y ?x))", "(* (+ ?y 1) ?x)"}
 rule! {addrule84, "(+ (* ?x ?y) ?x)", "(* ?x (+ ?y 1))"}
-rule! {addrule86, "(+ (/ (+ ?x ?c0) ?c1) ?c2)", "(/ (+ ?x (+ ?c0 (* ?c1 ?c2))) ?c1)"}
-rule! {addrule87, "(+ (+ ?x (/ (+ ?y ?c0) ?c1)) ?c2)", "(+ ?x (/ (+ ?y (+ ?c0 (* ?c1 ?c2))) ?c1))"}
-rule! {addrule88, "(+ (+ (/ (+ ?y ?c0) ?c1) ?x) ?c2)", "(+ ?x (/ (+ ?y (+ ?c0 (* ?c1 ?c2))) ?c1))"}
-rule! {addrule90, "(+ ?x (/ (+ ?x ?y) ?c0))", "(/ (+ (* (+ ?c0 1) ?x) ?y) ?c0)"}
-rule! {addrule91, "(+ ?x (/ (+ ?y ?x) ?c0))", "(/ (+ (* (+ ?c0 1) ?x) ?y) ?c0)"}
-rule! {addrule92, "(+ ?x (/ (- ?y ?x) ?c0))", "(/ (+ (* (- ?c0 1) ?x) ?y) ?c0)"}
-rule! {addrule93, "(+ ?x (/ (- ?x ?y) ?c0))", "(/ (- (* (+ ?c0 1) ?x) ?y) ?c0)"}
-rule! {addrule94, "(+ (/ (- ?x ?y) ?c0) ?x)", "(/ (- (* (+ ?c0 1) ?x) ?y) ?c0)"}
-rule! {addrule95, "(+ (/ (- ?y ?x) ?c0) ?x)", "(/ (+ ?y (* (- ?c0 1) ?x)) ?c0)"}
-rule! {addrule96, "(+ (/ (+ ?x ?y) ?c0) ?x)", "(/ (+ (* (+ ?c0 1) ?x) ?y) ?c0)"}
-rule! {addrule97, "(+ (/ (+ ?y ?x) ?c0) ?x)", "(/ (+ ?y (* (+ ?c0 1) ?x)) ?c0)"}
+rule! {addrule86, "(+ (div (+ ?x ?c0) ?c1) ?c2)", "(div (+ ?x (+ ?c0 (* ?c1 ?c2))) ?c1)"}
+rule! {addrule87, "(+ (+ ?x (div (+ ?y ?c0) ?c1)) ?c2)", "(+ ?x (div (+ ?y (+ ?c0 (* ?c1 ?c2))) ?c1))"}
+rule! {addrule88, "(+ (+ (div (+ ?y ?c0) ?c1) ?x) ?c2)", "(+ ?x (div (+ ?y (+ ?c0 (* ?c1 ?c2))) ?c1))"}
+rule! {addrule90, "(+ ?x (div (+ ?x ?y) ?c0))", "(div (+ (* (+ ?c0 1) ?x) ?y) ?c0)"}
+rule! {addrule91, "(+ ?x (div (+ ?y ?x) ?c0))", "(div (+ (* (+ ?c0 1) ?x) ?y) ?c0)"}
+rule! {addrule92, "(+ ?x (div (- ?y ?x) ?c0))", "(div (+ (* (- ?c0 1) ?x) ?y) ?c0)"}
+rule! {addrule93, "(+ ?x (div (- ?x ?y) ?c0))", "(div (- (* (+ ?c0 1) ?x) ?y) ?c0)"}
+rule! {addrule94, "(+ (div (- ?x ?y) ?c0) ?x)", "(div (- (* (+ ?c0 1) ?x) ?y) ?c0)"}
+rule! {addrule95, "(+ (div (- ?y ?x) ?c0) ?x)", "(div (+ ?y (* (- ?c0 1) ?x)) ?c0)"}
+rule! {addrule96, "(+ (div (+ ?x ?y) ?c0) ?x)", "(div (+ (* (+ ?c0 1) ?x) ?y) ?c0)"}
+rule! {addrule97, "(+ (div (+ ?y ?x) ?c0) ?x)", "(div (+ ?y (* (+ ?c0 1) ?x)) ?c0)"}
 rule! {addrule98, "(+ (min ?x (- ?y ?z)) ?z)", "(min (+ ?x ?z) ?y)"}
 rule! {addrule99, "(+ (min (- ?y ?z) ?x) ?z)", "(min ?y (+ ?x ?z))"}
 conditional_rule! {addrule100, "(+ (min ?x (+ ?y ?c0)) ?c1)", "(min (+ ?x ?c1) ?y)", "(= (+ ?c0 ?c1) 0)", "T"}
@@ -162,142 +162,142 @@ rule! {addrule107, "(+ (max (- ?y ?z) ?x) ?z)", "(max ?y (+ ?x ?z))"}
 conditional_rule! {addrule108, "(+ (max ?x (+ ?y ?c0)) ?c1)", "(max (+ ?x ?c1) ?y)", "(= (+ ?c0 ?c1) 0)", "T"}
 conditional_rule! {addrule109, "(+ (max (+ ?y ?c0) ?x) ?c1)", "(max ?y (+ ?x ?c1))", "(= (+ ?c0 ?c1) 0)", "T"}
 rule! {addrule110, "(+ (max ?x ?y) (min ?x ?y))", "(+ ?x ?y)"}
-conditional_rule! {addrule113, "(+ (* (/ ?x ?c0) ?c0) (% ?x ?c0))", "?x", "(!= ?c0 0)", "T"}
-conditional_rule! {addrule114, "(+ (* (+ ?z (/ ?x ?c0)) ?c0) (% ?x ?c0))", "(+ (* ?z ?c0) ?x)", "(!= ?c0 0)", "T"}
-conditional_rule! {addrule115, "(+ (* (+ (/ ?x ?c0) ?z) ?c0) (% ?x ?c0))", "(+ ?x (* ?z ?c0))", "(!= ?c0 0)", "T"}
-conditional_rule! {addrule116, "(+ (% ?x ?c0) (+ (* (/ ?x ?c0) ?c0) ?z))", "(+ ?x ?z)", "(!= ?c0 0)", "T"}
-conditional_rule! {addrule117, "(+ (% ?x ?c0) (- (* (/ ?x ?c0) ?c0) ?z))", "(- ?x ?z)", "(!= ?c0 0)", "T"}
-conditional_rule! {addrule118, "(+ (% ?x ?c0) (+ ?z (* (/ ?x ?c0) ?c0)))", "(+ ?x ?z)", "(!= ?c0 0)", "T"}
-conditional_rule! {addrule119, "(+ (* (/ ?x ?c0) ?c0) (+ (% ?x ?c0) ?z))", "(+ ?x ?z)", "(!= ?c0 0)", "T"}
-conditional_rule! {addrule120, "(+ (* (/ ?x ?c0) ?c0) (- (% ?x ?c0) ?z))", "(- ?x ?z)", "(!= ?c0 0)", "T"}
-conditional_rule! {addrule121, "(+ (* (/ ?x ?c0) ?c0) (+ ?z (% ?x ?c0)))", "(+ ?x ?z)", "(!= ?c0 0)", "T"}
-rule! {addrule122, "(+ (/ ?x 2) (% ?x 2))", "(/ (+ ?x 1) 2)"}
-conditional_rule! {addrule124, "(+ ?x (* (/ (- ?c0 ?x) ?c1) ?c1))", "(- ?c0 (% (- ?c0 ?x) ?c1))", "(> ?c1 0)", "T"}
-conditional_rule! {addrule125, "(+ ?x (* (+ (/ (- ?c0 ?x) ?c1) ?y) ?c1))", "(+ (- (* ?y ?c1) (% (- ?c0 ?x) ?c1)) ?c0)", "(> ?c1 0)", "T"}
-conditional_rule! {addrule126, "(+ ?x (* (+ ?y (/ (- ?c0 ?x) ?c1)) ?c1))", "(+ (- (* ?y ?c1) (% (- ?c0 ?x) ?c1)) ?c0)", "(> ?c1 0)", "T"}
-rule! {andrule22, "(&& ?x T)", "?x"}
-rule! {andrule23, "(&& ?x F)", "F"}
-rule! {andrule24, "(&& ?x ?x)", "?x"}
-rule! {andrule26, "(&& (&& ?x ?y) ?x)", "(&& ?x ?y)"}
-rule! {andrule27, "(&& ?x (&& ?x ?y))", "(&& ?x ?y)"}
-rule! {andrule28, "(&& (&& ?x ?y) ?y)", "(&& ?x ?y)"}
-rule! {andrule29, "(&& ?y (&& ?x ?y))", "(&& ?x ?y)"}
-rule! {andrule31, "(&& (&& (&& ?x ?y) ?z) ?x)", "(&& (&& ?x ?y) ?z)"}
-rule! {andrule32, "(&& ?x (&& (&& ?x ?y) ?z))", "(&& (&& ?x ?y) ?z)"}
-rule! {andrule33, "(&& (&& ?z (&& ?x ?y)) ?x)", "(&& ?z (&& ?x ?y))"}
-rule! {andrule34, "(&& ?x (&& ?z (&& ?x ?y)))", "(&& ?z (&& ?x ?y))"}
-rule! {andrule35, "(&& (&& (&& ?x ?y) ?z) ?y)", "(&& (&& ?x ?y) ?z)"}
-rule! {andrule36, "(&& ?y (&& (&& ?x ?y) ?z))", "(&& (&& ?x ?y) ?z)"}
-rule! {andrule37, "(&& (&& ?z (&& ?x ?y)) ?y)", "(&& ?z (&& ?x ?y))"}
-rule! {andrule38, "(&& ?y (&& ?z (&& ?x ?y)))", "(&& ?z (&& ?x ?y))"}
-rule! {andrule40, "(&& (|| ?x ?y) ?x)", "?x"}
-rule! {andrule41, "(&& ?x (|| ?x ?y))", "?x"}
-rule! {andrule42, "(&& (|| ?x ?y) ?y)", "?y"}
-rule! {andrule43, "(&& ?y (|| ?x ?y))", "?y"}
-rule! {andrule45, "(!= ?x (= (&& ?y ?x) ?y))", "F"}
-rule! {andrule46, "(!= ?x (= (&& ?y ?y) ?x))", "F"}
-rule! {andrule47, "(= (&& (!= (&& ?z ?x) ?y) ?x) ?y)", "F"}
-rule! {andrule48, "(= (&& (!= (&& ?z ?x) ?y) ?y) ?x)", "F"}
-rule! {andrule49, "(= (&& (!= ?x (&& ?y ?z)) ?x) ?y)", "F"}
-rule! {andrule50, "(= (&& (!= ?x (&& ?y ?z)) ?y) ?x)", "F"}
-rule! {andrule51, "(!= (&& (= (&& ?z ?x) ?y) ?x) ?y)", "F"}
-rule! {andrule52, "(!= (&& (= (&& ?z ?x) ?y) ?y) ?x)", "F"}
-rule! {andrule53, "(!= (&& (= ?x (&& ?y ?z)) ?x) ?y)", "F"}
-rule! {andrule54, "(!= (&& (= ?x (&& ?y ?z)) ?y) ?x)", "F"}
-rule! {andrule55, "(&& ?x (not ?x))", "F"}
-rule! {andrule56, "(&& (not ?x) ?x)", "F"}
-rule! {andrule57, "(< (<= ?y (&& ?x ?x)) ?y)", "F"}
-conditional_rule! {andrule66, "(< (<= ?x (&& ?c1 ?c0)) ?x)", "F", "(<= ?c1 ?c0)", "T"}
-conditional_rule! {andrule67, "(< (<= ?c0 (&& ?x ?x)) ?c1)", "F", "(<= ?c1 ?c0)", "T"}
-conditional_rule! {andrule68, "(<= (<= ?c0 (&& ?x ?x)) ?c1)", "F", "(< ?c1 ?c0)", "T"}
-conditional_rule! {andrule69, "(<= (<= ?x (&& ?c1 ?c0)) ?x)", "F", "(< ?c1 ?c0)", "T"}
-rule! {andrule70, "(< (< ?c0 (&& ?x ?c1)) ?x)", "(< (max ?c0 ?c1) ?x)"}
-rule! {andrule71, "(<= (<= ?c0 (&& ?x ?c1)) ?x)", "(<= (max ?c0 ?c1) ?x)"}
-rule! {andrule72, "(< (< ?x (&& ?c0 ?x)) ?c1)", "(< ?x (min ?c0 ?c1))"}
-rule! {andrule73, "(<= (<= ?x (&& ?c0 ?x)) ?c1)", "(<= ?x (min ?c0 ?c1))"}
-rule! {andrule79, "(&& (|| ?x (&& ?y ?z)) ?y)", "(&& (|| ?x ?z) ?y)"}
-rule! {andrule80, "(&& (|| ?x (&& ?z ?y)) ?y)", "(&& (|| ?x ?z) ?y)"}
-rule! {andrule81, "(&& ?y (|| ?x (&& ?y ?z)))", "(&& ?y (|| ?x ?z))"}
-rule! {andrule82, "(&& ?y (|| ?x (&& ?z ?y)))", "(&& ?y (|| ?x ?z))"}
-rule! {andrule84, "(&& (|| (&& ?y ?z) ?x) ?y)", "(&& (|| ?z ?x) ?y)"}
-rule! {andrule85, "(&& (|| (&& ?z ?y) ?x) ?y)", "(&& (|| ?z ?x) ?y)"}
-rule! {andrule86, "(&& ?y (|| (&& ?y ?z) ?x))", "(&& ?y (|| ?z ?x))"}
-rule! {andrule87, "(&& ?y (|| (&& ?z ?y) ?x))", "(&& ?y (|| ?z ?x))"}
-rule! {andrule89, "(&& (&& ?x (|| ?y ?z)) ?y)", "(&& ?x ?y)"}
-rule! {andrule90, "(&& (&& ?x (|| ?z ?y)) ?y)", "(&& ?x ?y)"}
-rule! {andrule91, "(&& ?y (&& ?x (|| ?y ?z)))", "(&& ?y ?x)"}
-rule! {andrule92, "(&& ?y (&& ?x (|| ?z ?y)))", "(&& ?y ?x)"}
-rule! {andrule94, "(&& (&& (|| ?y ?z) ?x) ?y)", "(&& ?x ?y)"}
-rule! {andrule95, "(&& (&& (|| ?z ?y) ?x) ?y)", "(&& ?x ?y)"}
-rule! {andrule96, "(&& ?y (&& (|| ?y ?z) ?x))", "(&& ?y ?x)"}
-rule! {andrule97, "(&& ?y (&& (|| ?z ?y) ?x))", "(&& ?y ?x)"}
-rule! {andrule99, "(&& (|| ?x ?y) (|| ?x ?z))", "(|| ?x (&& ?y ?z))"}
-rule! {andrule100, "(&& (|| ?x ?y) (|| ?z ?x))", "(|| ?x (&& ?y ?z))"}
-rule! {andrule101, "(&& (|| ?y ?x) (|| ?x ?z))", "(|| ?x (&& ?y ?z))"}
-rule! {andrule102, "(&& (|| ?y ?x) (|| ?z ?x))", "(|| ?x (&& ?y ?z))"}
-rule! {andrule104, "(< (< ?x (&& ?y ?x)) ?z)", "(< ?x (min ?y ?z))"}
-rule! {andrule105, "(< (< ?y (&& ?x ?z)) ?x)", "(< (max ?y ?z) ?x)"}
-rule! {andrule106, "(<= (<= ?x (&& ?y ?x)) ?z)", "(<= ?x (min ?y ?z))"}
-rule! {andrule107, "(<= (<= ?y (&& ?x ?z)) ?x)", "(<= (max ?y ?z) ?x)"}
-rule! {divrule96, "(/ ?x 1)", "?x"}
-rule! {divrule100, "(/ ?x ?x)", "1"}
-rule! {divrule107, "(/ (select ?x ?c0 ?c1) ?c2)", "(select ?x (/ ?c0 ?c2) (/ ?c1 ?c2))"}
-conditional_rule! {divrule112, "(/ (* ?x ?c0) ?c1)", "(/ ?x (/ ?c1 ?c0))", "(= (% ?c1 ?c0) (!= (> (&& 0 ?c0) (&& 0 (/ ?c1 ?c0))) 0))", "T"}
-conditional_rule! {divrule114, "(/ (* ?x ?c0) ?c1)", "(* ?x (/ ?c0 ?c1))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule116, "(/ (+ (* ?x ?c0) ?y) ?c1)", "(+ (/ ?y ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule117, "(/ (- (* ?x ?c0) ?y) ?c1)", "(+ (/ (- ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule118, "(/ (+ ?y (* ?x ?c0)) ?c1)", "(+ (/ ?y ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule119, "(/ (- ?y (* ?x ?c0)) ?c1)", "(- (/ ?y ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule121, "(/ (+ (+ (* ?x ?c0) ?y) ?z) ?c1)", "(+ (/ (+ ?y ?z) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule122, "(/ (+ (- (* ?x ?c0) ?y) ?z) ?c1)", "(+ (/ (- ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule123, "(/ (- (+ (* ?x ?c0) ?y) ?z) ?c1)", "(+ (/ (- ?y ?z) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule124, "(/ (- (- (* ?x ?c0) ?y) ?z) ?c1)", "(+ (/ (- (- ?y) ?z) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule126, "(/ (+ (+ ?y (* ?x ?c0)) ?z) ?c1)", "(+ (/ (+ ?y ?z) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule127, "(/ (- (+ ?y (* ?x ?c0)) ?z) ?c1)", "(+ (/ (- ?y ?z) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule128, "(/ (- (- ?y (* ?x ?c0)) ?z) ?c1)", "(- (/ (- ?y ?z) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule129, "(/ (+ (- ?y (* ?x ?c0)) ?z) ?c1)", "(- (/ (+ ?y ?z) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule131, "(/ (+ ?z (+ (* ?x ?c0) ?y)) ?c1)", "(+ (/ (+ ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule132, "(/ (+ ?z (- (* ?x ?c0) ?y)) ?c1)", "(+ (/ (- ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule133, "(/ (- ?z (- (* ?x ?c0) ?y)) ?c1)", "(- (/ (+ ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule134, "(/ (- ?z (+ (* ?x ?c0) ?y)) ?c1)", "(- (/ (- ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule136, "(/ (+ ?z (+ ?y (* ?x ?c0))) ?c1)", "(+ (/ (+ ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule137, "(/ (- ?z (+ ?y (* ?x ?c0))) ?c1)", "(- (/ (- ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule138, "(/ (+ ?z (- ?y (* ?x ?c0))) ?c1)", "(- (/ (+ ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule139, "(/ (- ?z (- ?y (* ?x ?c0))) ?c1)", "(+ (/ (- ?z ?y) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule142, "(/ (+ (+ (+ (* ?x ?c0) ?y) ?z) ?w) ?c1)", "(+ (/ (+ (+ ?y ?z) ?w) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule143, "(/ (+ (+ (+ ?y (* ?x ?c0)) ?z) ?w) ?c1)", "(+ (/ (+ (+ ?y ?z) ?w) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule144, "(/ (+ (+ ?z (+ (* ?x ?c0) ?y)) ?w) ?c1)", "(+ (/ (+ (+ ?y ?z) ?w) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule145, "(/ (+ (+ ?z (+ ?y (* ?x ?c0))) ?w) ?c1)", "(+ (/ (+ (+ ?y ?z) ?w) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule146, "(/ (+ ?w (+ (+ (* ?x ?c0) ?y) ?z)) ?c1)", "(+ (/ (+ (+ ?y ?z) ?w) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule147, "(/ (+ ?w (+ (+ ?y (* ?x ?c0)) ?z)) ?c1)", "(+ (/ (+ (+ ?y ?z) ?w) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule148, "(/ (+ ?w (+ ?z (+ (* ?x ?c0) ?y))) ?c1)", "(+ (/ (+ (+ ?y ?z) ?w) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule149, "(/ (+ ?w (+ ?z (+ ?y (* ?x ?c0)))) ?c1)", "(+ (/ (+ (+ ?y ?z) ?w) ?c1) (* ?x (/ ?c0 ?c1)))", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {divrule151, "(/ (+ ?x ?c0) ?c1)", "(+ (/ ?x ?c1) (/ ?c0 ?c1))", "(= (% ?c0 ?c1) 0)", "T"}
-rule! {divrule152, "(/ (+ ?x ?y) ?x)", "(+ (/ ?y ?x) 1)"}
-rule! {divrule153, "(/ (+ ?y ?x) ?x)", "(+ (/ ?y ?x) 1)"}
-rule! {divrule154, "(/ (- ?x ?y) ?x)", "(+ (/ (- ?y) ?x) 1)"}
-rule! {divrule155, "(/ (- ?y ?x) ?x)", "(- (/ ?y ?x) 1)"}
-rule! {divrule156, "(/ (+ (+ ?x ?y) ?z) ?x)", "(+ (/ (+ ?y ?z) ?x) 1)"}
-rule! {divrule157, "(/ (+ (+ ?y ?x) ?z) ?x)", "(+ (/ (+ ?y ?z) ?x) 1)"}
-rule! {divrule158, "(/ (+ ?z (+ ?x ?y)) ?x)", "(+ (/ (+ ?z ?y) ?x) 1)"}
-rule! {divrule159, "(/ (+ ?z (+ ?y ?x)) ?x)", "(+ (/ (+ ?z ?y) ?x) 1)"}
-rule! {divrule162, "(/ (+ (* ?x ?y) ?z) ?x)", "(+ ?y (/ ?z ?x))"}
-rule! {divrule163, "(/ (+ (* ?y ?x) ?z) ?x)", "(+ ?y (/ ?z ?x))"}
-rule! {divrule164, "(/ (+ ?z (* ?x ?y)) ?x)", "(+ (/ ?z ?x) ?y)"}
-rule! {divrule165, "(/ (+ ?z (* ?y ?x)) ?x)", "(+ (/ ?z ?x) ?y)"}
-rule! {divrule166, "(/ (- (* ?x ?y) ?z) ?x)", "(+ ?y (/ (- ?z) ?x))"}
-rule! {divrule167, "(/ (- (* ?y ?x) ?z) ?x)", "(+ ?y (/ (- ?z) ?x))"}
-rule! {divrule168, "(/ (- ?z (* ?x ?y)) ?x)", "(- (/ ?z ?x) ?y)"}
-rule! {divrule169, "(/ (- ?z (* ?y ?x)) ?x)", "(- (/ ?z ?x) ?y)"}
-rule! {divrule177, "(/ ?x -1)", "(- ?x)"}
-conditional_rule! {divrule178, "(/ ?c0 ?y)", "(select (< ?y 0) (- ?c0) ?c0)", "(= ?c0 -1)", "T"}
-conditional_rule! {divrule179, "(/ (+ (* ?x ?c0) ?c1) ?c2)", "(/ (+ ?x (/ ?c1 ?c0)) (/ ?c2 ?c0))", "(= (> (> ?c2 (&& 0 ?c0)) (&& 0 (% ?c2 ?c0))) 0)", "T"}
-conditional_rule! {divrule180, "(/ (+ (* ?x ?c0) ?c1) ?c2)", "(+ (* ?x (/ ?c0 ?c2)) (/ ?c1 ?c2))", "(= (> ?c2 (&& 0 (% ?c0 ?c2))) 0)", "T"}
-conditional_rule! {divrule182, "(/ (+ (% ?x 2) ?c0) 2)", "(+ (% ?x 2) (/ ?c0 2))", "(= (% ?c0 2) 1)", "T"}
-rule! {eqrule67, "(= (select ?x 0 ?y) 0)", "(|| ?x (= ?y 0))"}
-conditional_rule! {eqrule68, "(= (select ?x ?c0 ?y) 0)", "(&& (not ?x) (= ?y 0))", "(!= ?c0 0)", "T"}
-rule! {eqrule69, "(= (select ?x ?y 0) 0)", "(|| (not ?x) (= ?y 0))"}
-conditional_rule! {eqrule70, "(= (select ?x ?y ?c0) 0)", "(&& ?x (= ?y 0))", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule113, "(+ (* (div ?x ?c0) ?c0) (mod ?x ?c0))", "?x", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule114, "(+ (* (+ ?z (div ?x ?c0)) ?c0) (mod ?x ?c0))", "(+ (* ?z ?c0) ?x)", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule115, "(+ (* (+ (div ?x ?c0) ?z) ?c0) (mod ?x ?c0))", "(+ ?x (* ?z ?c0))", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule116, "(+ (mod ?x ?c0) (+ (* (div ?x ?c0) ?c0) ?z))", "(+ ?x ?z)", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule117, "(+ (mod ?x ?c0) (- (* (div ?x ?c0) ?c0) ?z))", "(- ?x ?z)", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule118, "(+ (mod ?x ?c0) (+ ?z (* (div ?x ?c0) ?c0)))", "(+ ?x ?z)", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule119, "(+ (* (div ?x ?c0) ?c0) (+ (mod ?x ?c0) ?z))", "(+ ?x ?z)", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule120, "(+ (* (div ?x ?c0) ?c0) (- (mod ?x ?c0) ?z))", "(- ?x ?z)", "(!= ?c0 0)", "T"}
+conditional_rule! {addrule121, "(+ (* (div ?x ?c0) ?c0) (+ ?z (mod ?x ?c0)))", "(+ ?x ?z)", "(!= ?c0 0)", "T"}
+rule! {addrule122, "(+ (div ?x 2) (mod ?x 2))", "(div (+ ?x 1) 2)"}
+conditional_rule! {addrule124, "(+ ?x (* (div (- ?c0 ?x) ?c1) ?c1))", "(- ?c0 (mod (- ?c0 ?x) ?c1))", "(> ?c1 0)", "T"}
+conditional_rule! {addrule125, "(+ ?x (* (+ (div (- ?c0 ?x) ?c1) ?y) ?c1))", "(+ (- (* ?y ?c1) (mod (- ?c0 ?x) ?c1)) ?c0)", "(> ?c1 0)", "T"}
+conditional_rule! {addrule126, "(+ ?x (* (+ ?y (div (- ?c0 ?x) ?c1)) ?c1))", "(+ (- (* ?y ?c1) (mod (- ?c0 ?x) ?c1)) ?c0)", "(> ?c1 0)", "T"}
+rule! {andrule22, "(and ?x T)", "?x"}
+rule! {andrule23, "(and ?x F)", "F"}
+rule! {andrule24, "(and ?x ?x)", "?x"}
+rule! {andrule26, "(and (and ?x ?y) ?x)", "(and ?x ?y)"}
+rule! {andrule27, "(and ?x (and ?x ?y))", "(and ?x ?y)"}
+rule! {andrule28, "(and (and ?x ?y) ?y)", "(and ?x ?y)"}
+rule! {andrule29, "(and ?y (and ?x ?y))", "(and ?x ?y)"}
+rule! {andrule31, "(and (and (and ?x ?y) ?z) ?x)", "(and (and ?x ?y) ?z)"}
+rule! {andrule32, "(and ?x (and (and ?x ?y) ?z))", "(and (and ?x ?y) ?z)"}
+rule! {andrule33, "(and (and ?z (and ?x ?y)) ?x)", "(and ?z (and ?x ?y))"}
+rule! {andrule34, "(and ?x (and ?z (and ?x ?y)))", "(and ?z (and ?x ?y))"}
+rule! {andrule35, "(and (and (and ?x ?y) ?z) ?y)", "(and (and ?x ?y) ?z)"}
+rule! {andrule36, "(and ?y (and (and ?x ?y) ?z))", "(and (and ?x ?y) ?z)"}
+rule! {andrule37, "(and (and ?z (and ?x ?y)) ?y)", "(and ?z (and ?x ?y))"}
+rule! {andrule38, "(and ?y (and ?z (and ?x ?y)))", "(and ?z (and ?x ?y))"}
+rule! {andrule40, "(and (or ?x ?y) ?x)", "?x"}
+rule! {andrule41, "(and ?x (or ?x ?y))", "?x"}
+rule! {andrule42, "(and (or ?x ?y) ?y)", "?y"}
+rule! {andrule43, "(and ?y (or ?x ?y))", "?y"}
+rule! {andrule45, "(!= ?x (= (and ?y ?x) ?y))", "F"}
+rule! {andrule46, "(!= ?x (= (and ?y ?y) ?x))", "F"}
+rule! {andrule47, "(= (and (!= (and ?z ?x) ?y) ?x) ?y)", "F"}
+rule! {andrule48, "(= (and (!= (and ?z ?x) ?y) ?y) ?x)", "F"}
+rule! {andrule49, "(= (and (!= ?x (and ?y ?z)) ?x) ?y)", "F"}
+rule! {andrule50, "(= (and (!= ?x (and ?y ?z)) ?y) ?x)", "F"}
+rule! {andrule51, "(!= (and (= (and ?z ?x) ?y) ?x) ?y)", "F"}
+rule! {andrule52, "(!= (and (= (and ?z ?x) ?y) ?y) ?x)", "F"}
+rule! {andrule53, "(!= (and (= ?x (and ?y ?z)) ?x) ?y)", "F"}
+rule! {andrule54, "(!= (and (= ?x (and ?y ?z)) ?y) ?x)", "F"}
+rule! {andrule55, "(and ?x (not ?x))", "F"}
+rule! {andrule56, "(and (not ?x) ?x)", "F"}
+rule! {andrule57, "(< (<= ?y (and ?x ?x)) ?y)", "F"}
+conditional_rule! {andrule66, "(< (<= ?x (and ?c1 ?c0)) ?x)", "F", "(<= ?c1 ?c0)", "T"}
+conditional_rule! {andrule67, "(< (<= ?c0 (and ?x ?x)) ?c1)", "F", "(<= ?c1 ?c0)", "T"}
+conditional_rule! {andrule68, "(<= (<= ?c0 (and ?x ?x)) ?c1)", "F", "(< ?c1 ?c0)", "T"}
+conditional_rule! {andrule69, "(<= (<= ?x (and ?c1 ?c0)) ?x)", "F", "(< ?c1 ?c0)", "T"}
+rule! {andrule70, "(< (< ?c0 (and ?x ?c1)) ?x)", "(< (max ?c0 ?c1) ?x)"}
+rule! {andrule71, "(<= (<= ?c0 (and ?x ?c1)) ?x)", "(<= (max ?c0 ?c1) ?x)"}
+rule! {andrule72, "(< (< ?x (and ?c0 ?x)) ?c1)", "(< ?x (min ?c0 ?c1))"}
+rule! {andrule73, "(<= (<= ?x (and ?c0 ?x)) ?c1)", "(<= ?x (min ?c0 ?c1))"}
+rule! {andrule79, "(and (or ?x (and ?y ?z)) ?y)", "(and (or ?x ?z) ?y)"}
+rule! {andrule80, "(and (or ?x (and ?z ?y)) ?y)", "(and (or ?x ?z) ?y)"}
+rule! {andrule81, "(and ?y (or ?x (and ?y ?z)))", "(and ?y (or ?x ?z))"}
+rule! {andrule82, "(and ?y (or ?x (and ?z ?y)))", "(and ?y (or ?x ?z))"}
+rule! {andrule84, "(and (or (and ?y ?z) ?x) ?y)", "(and (or ?z ?x) ?y)"}
+rule! {andrule85, "(and (or (and ?z ?y) ?x) ?y)", "(and (or ?z ?x) ?y)"}
+rule! {andrule86, "(and ?y (or (and ?y ?z) ?x))", "(and ?y (or ?z ?x))"}
+rule! {andrule87, "(and ?y (or (and ?z ?y) ?x))", "(and ?y (or ?z ?x))"}
+rule! {andrule89, "(and (and ?x (or ?y ?z)) ?y)", "(and ?x ?y)"}
+rule! {andrule90, "(and (and ?x (or ?z ?y)) ?y)", "(and ?x ?y)"}
+rule! {andrule91, "(and ?y (and ?x (or ?y ?z)))", "(and ?y ?x)"}
+rule! {andrule92, "(and ?y (and ?x (or ?z ?y)))", "(and ?y ?x)"}
+rule! {andrule94, "(and (and (or ?y ?z) ?x) ?y)", "(and ?x ?y)"}
+rule! {andrule95, "(and (and (or ?z ?y) ?x) ?y)", "(and ?x ?y)"}
+rule! {andrule96, "(and ?y (and (or ?y ?z) ?x))", "(and ?y ?x)"}
+rule! {andrule97, "(and ?y (and (or ?z ?y) ?x))", "(and ?y ?x)"}
+rule! {andrule99, "(and (or ?x ?y) (or ?x ?z))", "(or ?x (and ?y ?z))"}
+rule! {andrule100, "(and (or ?x ?y) (or ?z ?x))", "(or ?x (and ?y ?z))"}
+rule! {andrule101, "(and (or ?y ?x) (or ?x ?z))", "(or ?x (and ?y ?z))"}
+rule! {andrule102, "(and (or ?y ?x) (or ?z ?x))", "(or ?x (and ?y ?z))"}
+rule! {andrule104, "(< (< ?x (and ?y ?x)) ?z)", "(< ?x (min ?y ?z))"}
+rule! {andrule105, "(< (< ?y (and ?x ?z)) ?x)", "(< (max ?y ?z) ?x)"}
+rule! {andrule106, "(<= (<= ?x (and ?y ?x)) ?z)", "(<= ?x (min ?y ?z))"}
+rule! {andrule107, "(<= (<= ?y (and ?x ?z)) ?x)", "(<= (max ?y ?z) ?x)"}
+rule! {divrule96, "(div ?x 1)", "?x"}
+rule! {divrule100, "(div ?x ?x)", "1"}
+rule! {divrule107, "(div (select ?x ?c0 ?c1) ?c2)", "(select ?x (div ?c0 ?c2) (div ?c1 ?c2))"}
+conditional_rule! {divrule112, "(div (* ?x ?c0) ?c1)", "(div ?x (div ?c1 ?c0))", "(= (mod ?c1 ?c0) (!= (> (and 0 ?c0) (and 0 (div ?c1 ?c0))) 0))", "T"}
+conditional_rule! {divrule114, "(div (* ?x ?c0) ?c1)", "(* ?x (div ?c0 ?c1))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule116, "(div (+ (* ?x ?c0) ?y) ?c1)", "(+ (div ?y ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule117, "(div (- (* ?x ?c0) ?y) ?c1)", "(+ (div (- ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule118, "(div (+ ?y (* ?x ?c0)) ?c1)", "(+ (div ?y ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule119, "(div (- ?y (* ?x ?c0)) ?c1)", "(- (div ?y ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule121, "(div (+ (+ (* ?x ?c0) ?y) ?z) ?c1)", "(+ (div (+ ?y ?z) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule122, "(div (+ (- (* ?x ?c0) ?y) ?z) ?c1)", "(+ (div (- ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule123, "(div (- (+ (* ?x ?c0) ?y) ?z) ?c1)", "(+ (div (- ?y ?z) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule124, "(div (- (- (* ?x ?c0) ?y) ?z) ?c1)", "(+ (div (- (- ?y) ?z) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule126, "(div (+ (+ ?y (* ?x ?c0)) ?z) ?c1)", "(+ (div (+ ?y ?z) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule127, "(div (- (+ ?y (* ?x ?c0)) ?z) ?c1)", "(+ (div (- ?y ?z) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule128, "(div (- (- ?y (* ?x ?c0)) ?z) ?c1)", "(- (div (- ?y ?z) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule129, "(div (+ (- ?y (* ?x ?c0)) ?z) ?c1)", "(- (div (+ ?y ?z) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule131, "(div (+ ?z (+ (* ?x ?c0) ?y)) ?c1)", "(+ (div (+ ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule132, "(div (+ ?z (- (* ?x ?c0) ?y)) ?c1)", "(+ (div (- ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule133, "(div (- ?z (- (* ?x ?c0) ?y)) ?c1)", "(- (div (+ ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule134, "(div (- ?z (+ (* ?x ?c0) ?y)) ?c1)", "(- (div (- ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule136, "(div (+ ?z (+ ?y (* ?x ?c0))) ?c1)", "(+ (div (+ ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule137, "(div (- ?z (+ ?y (* ?x ?c0))) ?c1)", "(- (div (- ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule138, "(div (+ ?z (- ?y (* ?x ?c0))) ?c1)", "(- (div (+ ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule139, "(div (- ?z (- ?y (* ?x ?c0))) ?c1)", "(+ (div (- ?z ?y) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule142, "(div (+ (+ (+ (* ?x ?c0) ?y) ?z) ?w) ?c1)", "(+ (div (+ (+ ?y ?z) ?w) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule143, "(div (+ (+ (+ ?y (* ?x ?c0)) ?z) ?w) ?c1)", "(+ (div (+ (+ ?y ?z) ?w) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule144, "(div (+ (+ ?z (+ (* ?x ?c0) ?y)) ?w) ?c1)", "(+ (div (+ (+ ?y ?z) ?w) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule145, "(div (+ (+ ?z (+ ?y (* ?x ?c0))) ?w) ?c1)", "(+ (div (+ (+ ?y ?z) ?w) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule146, "(div (+ ?w (+ (+ (* ?x ?c0) ?y) ?z)) ?c1)", "(+ (div (+ (+ ?y ?z) ?w) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule147, "(div (+ ?w (+ (+ ?y (* ?x ?c0)) ?z)) ?c1)", "(+ (div (+ (+ ?y ?z) ?w) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule148, "(div (+ ?w (+ ?z (+ (* ?x ?c0) ?y))) ?c1)", "(+ (div (+ (+ ?y ?z) ?w) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule149, "(div (+ ?w (+ ?z (+ ?y (* ?x ?c0)))) ?c1)", "(+ (div (+ (+ ?y ?z) ?w) ?c1) (* ?x (div ?c0 ?c1)))", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {divrule151, "(div (+ ?x ?c0) ?c1)", "(+ (div ?x ?c1) (div ?c0 ?c1))", "(= (mod ?c0 ?c1) 0)", "T"}
+rule! {divrule152, "(div (+ ?x ?y) ?x)", "(+ (div ?y ?x) 1)"}
+rule! {divrule153, "(div (+ ?y ?x) ?x)", "(+ (div ?y ?x) 1)"}
+rule! {divrule154, "(div (- ?x ?y) ?x)", "(+ (div (- ?y) ?x) 1)"}
+rule! {divrule155, "(div (- ?y ?x) ?x)", "(- (div ?y ?x) 1)"}
+rule! {divrule156, "(div (+ (+ ?x ?y) ?z) ?x)", "(+ (div (+ ?y ?z) ?x) 1)"}
+rule! {divrule157, "(div (+ (+ ?y ?x) ?z) ?x)", "(+ (div (+ ?y ?z) ?x) 1)"}
+rule! {divrule158, "(div (+ ?z (+ ?x ?y)) ?x)", "(+ (div (+ ?z ?y) ?x) 1)"}
+rule! {divrule159, "(div (+ ?z (+ ?y ?x)) ?x)", "(+ (div (+ ?z ?y) ?x) 1)"}
+rule! {divrule162, "(div (+ (* ?x ?y) ?z) ?x)", "(+ ?y (div ?z ?x))"}
+rule! {divrule163, "(div (+ (* ?y ?x) ?z) ?x)", "(+ ?y (div ?z ?x))"}
+rule! {divrule164, "(div (+ ?z (* ?x ?y)) ?x)", "(+ (div ?z ?x) ?y)"}
+rule! {divrule165, "(div (+ ?z (* ?y ?x)) ?x)", "(+ (div ?z ?x) ?y)"}
+rule! {divrule166, "(div (- (* ?x ?y) ?z) ?x)", "(+ ?y (div (- ?z) ?x))"}
+rule! {divrule167, "(div (- (* ?y ?x) ?z) ?x)", "(+ ?y (div (- ?z) ?x))"}
+rule! {divrule168, "(div (- ?z (* ?x ?y)) ?x)", "(- (div ?z ?x) ?y)"}
+rule! {divrule169, "(div (- ?z (* ?y ?x)) ?x)", "(- (div ?z ?x) ?y)"}
+rule! {divrule177, "(div ?x -1)", "(- ?x)"}
+conditional_rule! {divrule178, "(div ?c0 ?y)", "(select (< ?y 0) (- ?c0) ?c0)", "(= ?c0 -1)", "T"}
+conditional_rule! {divrule179, "(div (+ (* ?x ?c0) ?c1) ?c2)", "(div (+ ?x (div ?c1 ?c0)) (div ?c2 ?c0))", "(= (> (> ?c2 (and 0 ?c0)) (and 0 (mod ?c2 ?c0))) 0)", "T"}
+conditional_rule! {divrule180, "(div (+ (* ?x ?c0) ?c1) ?c2)", "(+ (* ?x (div ?c0 ?c2)) (div ?c1 ?c2))", "(= (> ?c2 (and 0 (mod ?c0 ?c2))) 0)", "T"}
+conditional_rule! {divrule182, "(div (+ (mod ?x 2) ?c0) 2)", "(+ (mod ?x 2) (div ?c0 2))", "(= (mod ?c0 2) 1)", "T"}
+rule! {eqrule67, "(= (select ?x 0 ?y) 0)", "(or ?x (= ?y 0))"}
+conditional_rule! {eqrule68, "(= (select ?x ?c0 ?y) 0)", "(and (not ?x) (= ?y 0))", "(!= ?c0 0)", "T"}
+rule! {eqrule69, "(= (select ?x ?y 0) 0)", "(or (not ?x) (= ?y 0))"}
+conditional_rule! {eqrule70, "(= (select ?x ?y ?c0) 0)", "(and ?x (= ?y 0))", "(!= ?c0 0)", "T"}
 rule! {eqrule71, "(= (- (max ?x ?y) ?y) 0)", "(<= ?x ?y)"}
 rule! {eqrule72, "(= (- (min ?x ?y) ?y) 0)", "(<= ?y ?x)"}
 rule! {eqrule73, "(= (- (max ?y ?x) ?y) 0)", "(<= ?x ?y)"}
@@ -378,144 +378,144 @@ rule! {ltrule132, "(< (+ ?w (+ ?x ?y)) (+ ?u (+ ?z ?x)))", "(< (+ ?y ?w) (+ ?z ?
 rule! {ltrule133, "(< (+ ?w (+ ?y ?x)) (+ ?u (+ ?z ?x)))", "(< (+ ?y ?w) (+ ?z ?u))"}
 conditional_rule! {ltrule136, "(< (* ?x ?c0) (* ?y ?c0))", "(< ?x ?y)", "(> ?c0 0)", "T"}
 conditional_rule! {ltrule137, "(< (* ?x ?c0) (* ?y ?c0))", "(< ?y ?x)", "(< ?c0 0)", "T"}
-conditional_rule! {ltrule141, "(< ?c1 (* ?x ?c0))", "(< (/ ?c1 ?c0) ?x)", "(> ?c0 0)", "T"}
-conditional_rule! {ltrule144, "(< (/ ?x ?c0) ?c1)", "(< ?x (* ?c1 ?c0))", "(> ?c0 0)", "T"}
-rule! {ltrule151, "(< (min (+ ?x ?c0) ?y) (+ ?x ?c1))", "(< (|| (< ?c0 ?c1) ?y) (+ ?x ?c1))"}
-rule! {ltrule152, "(< (min ?y (+ ?x ?c0)) (+ ?x ?c1))", "(< (|| (< ?c0 ?c1) ?y) (+ ?x ?c1))"}
-rule! {ltrule153, "(< (max (+ ?x ?c0) ?y) (+ ?x ?c1))", "(< (&& (< ?c0 ?c1) ?y) (+ ?x ?c1))"}
-rule! {ltrule154, "(< (max ?y (+ ?x ?c0)) (+ ?x ?c1))", "(< (&& (< ?c0 ?c1) ?y) (+ ?x ?c1))"}
-rule! {ltrule156, "(< ?x (+ (min (+ ?x ?c0) ?y) ?c1))", "(< (&& (< 0 (+ ?c0 ?c1)) ?x) (+ ?y ?c1))"}
-rule! {ltrule157, "(< ?x (+ (min ?y (+ ?x ?c0)) ?c1))", "(< (&& (< 0 (+ ?c0 ?c1)) ?x) (+ ?y ?c1))"}
-rule! {ltrule158, "(< ?x (+ (max (+ ?x ?c0) ?y) ?c1))", "(< (|| (< 0 (+ ?c0 ?c1)) ?x) (+ ?y ?c1))"}
-rule! {ltrule159, "(< ?x (+ (max ?y (+ ?x ?c0)) ?c1))", "(< (|| (< 0 (+ ?c0 ?c1)) ?x) (+ ?y ?c1))"}
-rule! {ltrule162, "(< (min ?x ?y) (+ ?x ?c1))", "(< (|| (< 0 ?c1) ?y) (+ ?x ?c1))"}
-rule! {ltrule163, "(< (min ?y ?x) (+ ?x ?c1))", "(< (|| (< 0 ?c1) ?y) (+ ?x ?c1))"}
-rule! {ltrule164, "(< (max ?x ?y) (+ ?x ?c1))", "(< (&& (< 0 ?c1) ?y) (+ ?x ?c1))"}
-rule! {ltrule165, "(< (max ?y ?x) (+ ?x ?c1))", "(< (&& (< 0 ?c1) ?y) (+ ?x ?c1))"}
-rule! {ltrule167, "(< ?x (+ (min ?x ?y) ?c1))", "(< (&& (< 0 ?c1) ?x) (+ ?y ?c1))"}
-rule! {ltrule168, "(< ?x (+ (min ?y ?x) ?c1))", "(< (&& (< 0 ?c1) ?x) (+ ?y ?c1))"}
-rule! {ltrule169, "(< ?x (+ (max ?x ?y) ?c1))", "(< (|| (< 0 ?c1) ?x) (+ ?y ?c1))"}
-rule! {ltrule170, "(< ?x (+ (max ?y ?x) ?c1))", "(< (|| (< 0 ?c1) ?x) (+ ?y ?c1))"}
-rule! {ltrule173, "(< (min (+ ?x ?c0) ?y) ?x)", "(< (|| (< ?c0 0) ?y) ?x)"}
-rule! {ltrule174, "(< (min ?y (+ ?x ?c0)) ?x)", "(< (|| (< ?c0 0) ?y) ?x)"}
-rule! {ltrule175, "(< (max (+ ?x ?c0) ?y) ?x)", "(< (&& (< ?c0 0) ?y) ?x)"}
-rule! {ltrule176, "(< (max ?y (+ ?x ?c0)) ?x)", "(< (&& (< ?c0 0) ?y) ?x)"}
-rule! {ltrule178, "(< ?x (min (+ ?x ?c0) ?y))", "(< (&& (< 0 ?c0) ?x) ?y)"}
-rule! {ltrule179, "(< ?x (min ?y (+ ?x ?c0)))", "(< (&& (< 0 ?c0) ?x) ?y)"}
-rule! {ltrule180, "(< ?x (max (+ ?x ?c0) ?y))", "(< (|| (< 0 ?c0) ?x) ?y)"}
-rule! {ltrule181, "(< ?x (max ?y (+ ?x ?c0)))", "(< (|| (< 0 ?c0) ?x) ?y)"}
+conditional_rule! {ltrule141, "(< ?c1 (* ?x ?c0))", "(< (div ?c1 ?c0) ?x)", "(> ?c0 0)", "T"}
+conditional_rule! {ltrule144, "(< (div ?x ?c0) ?c1)", "(< ?x (* ?c1 ?c0))", "(> ?c0 0)", "T"}
+rule! {ltrule151, "(< (min (+ ?x ?c0) ?y) (+ ?x ?c1))", "(< (or (< ?c0 ?c1) ?y) (+ ?x ?c1))"}
+rule! {ltrule152, "(< (min ?y (+ ?x ?c0)) (+ ?x ?c1))", "(< (or (< ?c0 ?c1) ?y) (+ ?x ?c1))"}
+rule! {ltrule153, "(< (max (+ ?x ?c0) ?y) (+ ?x ?c1))", "(< (and (< ?c0 ?c1) ?y) (+ ?x ?c1))"}
+rule! {ltrule154, "(< (max ?y (+ ?x ?c0)) (+ ?x ?c1))", "(< (and (< ?c0 ?c1) ?y) (+ ?x ?c1))"}
+rule! {ltrule156, "(< ?x (+ (min (+ ?x ?c0) ?y) ?c1))", "(< (and (< 0 (+ ?c0 ?c1)) ?x) (+ ?y ?c1))"}
+rule! {ltrule157, "(< ?x (+ (min ?y (+ ?x ?c0)) ?c1))", "(< (and (< 0 (+ ?c0 ?c1)) ?x) (+ ?y ?c1))"}
+rule! {ltrule158, "(< ?x (+ (max (+ ?x ?c0) ?y) ?c1))", "(< (or (< 0 (+ ?c0 ?c1)) ?x) (+ ?y ?c1))"}
+rule! {ltrule159, "(< ?x (+ (max ?y (+ ?x ?c0)) ?c1))", "(< (or (< 0 (+ ?c0 ?c1)) ?x) (+ ?y ?c1))"}
+rule! {ltrule162, "(< (min ?x ?y) (+ ?x ?c1))", "(< (or (< 0 ?c1) ?y) (+ ?x ?c1))"}
+rule! {ltrule163, "(< (min ?y ?x) (+ ?x ?c1))", "(< (or (< 0 ?c1) ?y) (+ ?x ?c1))"}
+rule! {ltrule164, "(< (max ?x ?y) (+ ?x ?c1))", "(< (and (< 0 ?c1) ?y) (+ ?x ?c1))"}
+rule! {ltrule165, "(< (max ?y ?x) (+ ?x ?c1))", "(< (and (< 0 ?c1) ?y) (+ ?x ?c1))"}
+rule! {ltrule167, "(< ?x (+ (min ?x ?y) ?c1))", "(< (and (< 0 ?c1) ?x) (+ ?y ?c1))"}
+rule! {ltrule168, "(< ?x (+ (min ?y ?x) ?c1))", "(< (and (< 0 ?c1) ?x) (+ ?y ?c1))"}
+rule! {ltrule169, "(< ?x (+ (max ?x ?y) ?c1))", "(< (or (< 0 ?c1) ?x) (+ ?y ?c1))"}
+rule! {ltrule170, "(< ?x (+ (max ?y ?x) ?c1))", "(< (or (< 0 ?c1) ?x) (+ ?y ?c1))"}
+rule! {ltrule173, "(< (min (+ ?x ?c0) ?y) ?x)", "(< (or (< ?c0 0) ?y) ?x)"}
+rule! {ltrule174, "(< (min ?y (+ ?x ?c0)) ?x)", "(< (or (< ?c0 0) ?y) ?x)"}
+rule! {ltrule175, "(< (max (+ ?x ?c0) ?y) ?x)", "(< (and (< ?c0 0) ?y) ?x)"}
+rule! {ltrule176, "(< (max ?y (+ ?x ?c0)) ?x)", "(< (and (< ?c0 0) ?y) ?x)"}
+rule! {ltrule178, "(< ?x (min (+ ?x ?c0) ?y))", "(< (and (< 0 ?c0) ?x) ?y)"}
+rule! {ltrule179, "(< ?x (min ?y (+ ?x ?c0)))", "(< (and (< 0 ?c0) ?x) ?y)"}
+rule! {ltrule180, "(< ?x (max (+ ?x ?c0) ?y))", "(< (or (< 0 ?c0) ?x) ?y)"}
+rule! {ltrule181, "(< ?x (max ?y (+ ?x ?c0)))", "(< (or (< 0 ?c0) ?x) ?y)"}
 rule! {ltrule184, "(< (min ?x ?y) ?x)", "(< ?y ?x)"}
 rule! {ltrule185, "(< (min ?y ?x) ?x)", "(< ?y ?x)"}
 rule! {ltrule186, "(< ?x (max ?x ?y))", "(< ?x ?y)"}
 rule! {ltrule187, "(< ?x (max ?y ?x))", "(< ?x ?y)"}
-rule! {ltrule190, "(< (min ?y ?c0) ?c1)", "(< (|| (< ?c0 ?c1) ?y) ?c1)"}
-rule! {ltrule191, "(< (max ?y ?c0) ?c1)", "(< (&& (< ?c0 ?c1) ?y) ?c1)"}
-rule! {ltrule192, "(< ?c1 (min ?y ?c0))", "(< (&& (< ?c1 ?c0) ?c1) ?y)"}
-rule! {ltrule193, "(< ?c1 (max ?y ?c0))", "(< (|| (< ?c1 ?c0) ?c1) ?y)"}
-conditional_rule! {ltrule198, "(< ?x (select ?y (+ ?x ?c0) ?z))", "(&& (not ?y) (< ?x ?z))", "(<= ?c0 0)", "T"}
-conditional_rule! {ltrule199, "(< ?x (select ?y (+ ?x ?c0) ?z))", "(|| ?y (< ?x ?z))", "(> ?c0 0)", "T"}
-conditional_rule! {ltrule200, "(< ?x (select ?y ?z (+ ?x ?c0)))", "(&& ?y (< ?x ?z))", "(<= ?c0 0)", "T"}
-conditional_rule! {ltrule201, "(< ?x (select ?y ?z (+ ?x ?c0)))", "(|| (not ?y) (< ?x ?z))", "(> ?c0 0)", "T"}
-conditional_rule! {ltrule203, "(< ?x (+ (select ?y (+ ?x ?c0) ?z) ?c1))", "(&& (not ?y) (< ?x (+ ?z ?c1)))", "(<= (+ ?c0 ?c1) 0)", "T"}
-conditional_rule! {ltrule204, "(< ?x (+ (select ?y (+ ?x ?c0) ?z) ?c1))", "(|| ?y (< ?x (+ ?z ?c1)))", "(> (+ ?c0 ?c1) 0)", "T"}
-conditional_rule! {ltrule205, "(< ?x (+ (select ?y ?z (+ ?x ?c0)) ?c1))", "(&& ?y (< ?x (+ ?z ?c1)))", "(<= (+ ?c0 ?c1) 0)", "T"}
-conditional_rule! {ltrule206, "(< ?x (+ (select ?y ?z (+ ?x ?c0)) ?c1))", "(|| (not ?y) (< ?x (+ ?z ?c1)))", "(> (+ ?c0 ?c1) 0)", "T"}
-conditional_rule! {ltrule208, "(< (select ?y (+ ?x ?c0) ?z) ?x)", "(&& (not ?y) (< ?z ?x))", "(>= ?c0 0)", "T"}
-conditional_rule! {ltrule209, "(< (select ?y (+ ?x ?c0) ?z) ?x)", "(|| ?y (< ?z ?x))", "(< ?c0 0)", "T"}
-conditional_rule! {ltrule210, "(< (select ?y ?z (+ ?x ?c0)) ?x)", "(&& ?y (< ?z ?x))", "(>= ?c0 0)", "T"}
-conditional_rule! {ltrule211, "(< (select ?y ?z (+ ?x ?c0)) ?x)", "(|| (not ?y) (< ?z ?x))", "(< ?c0 0)", "T"}
-conditional_rule! {ltrule213, "(< (select ?y (+ ?x ?c0) ?z) (+ ?x ?c1))", "(&& (not ?y) (< ?z (+ ?x ?c1)))", "(>= ?c0 ?c1)", "T"}
-conditional_rule! {ltrule214, "(< (select ?y (+ ?x ?c0) ?z) (+ ?x ?c1))", "(|| ?y (< ?z (+ ?x ?c1)))", "(< ?c0 ?c1)", "T"}
-conditional_rule! {ltrule215, "(< (select ?y ?z (+ ?x ?c0)) (+ ?x ?c1))", "(&& ?y (< ?z (+ ?x ?c1)))", "(>= ?c0 ?c1)", "T"}
-conditional_rule! {ltrule216, "(< (select ?y ?z (+ ?x ?c0)) (+ ?x ?c1))", "(|| (not ?y) (< ?z (+ ?x ?c1)))", "(< ?c0 ?c1)", "T"}
-conditional_rule! {ltrule222, "(< (* ?x ?c0) (* ?y ?c1))", "(< ?x (* ?y (/ ?c1 ?c0)))", "(= (% ?c1 ?c0) (> (&& 0 ?c0) 0))", "T"}
-conditional_rule! {ltrule223, "(< (* ?x ?c0) (* ?y ?c1))", "(< (* ?x (/ ?c0 ?c1)) ?y)", "(= (% ?c0 ?c1) (> (&& 0 ?c1) 0))", "T"}
-conditional_rule! {ltrule225, "(< (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(< ?x (+ ?y (/ (- (+ ?c1 ?c0) 1) ?c0)))", "(> ?c0 0)", "T"}
-conditional_rule! {ltrule226, "(< (+ (* ?x ?c0) ?c1) (* ?y ?c0))", "(< (+ ?x (/ ?c1 ?c0)) ?y)", "(> ?c0 0)", "T"}
-conditional_rule! {ltrule236, "(< (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?w) (+ ?x ?z))", "(< (+ ?w ?c0) (+ (% (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule237, "(< (+ ?w (* (/ (+ ?x ?c0) ?c1) ?c1)) (+ ?x ?z))", "(< (+ ?w ?c0) (+ (% (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule238, "(< (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?w) (+ ?z ?x))", "(< (+ ?w ?c0) (+ (% (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule239, "(< (+ ?w (* (/ (+ ?x ?c0) ?c1) ?c1)) (+ ?z ?x))", "(< (+ ?w ?c0) (+ (% (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule240, "(< (+ ?x ?z) (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?w))", "(< (+ (% (+ ?x ?c0) ?c1) ?z) (+ ?w ?c0))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule241, "(< (+ ?x ?z) (+ ?w (* (/ (+ ?x ?c0) ?c1) ?c1)))", "(< (+ (% (+ ?x ?c0) ?c1) ?z) (+ ?w ?c0))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule242, "(< (+ ?z ?x) (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?w))", "(< (+ (% (+ ?x ?c0) ?c1) ?z) (+ ?w ?c0))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule243, "(< (+ ?z ?x) (+ ?w (* (/ (+ ?x ?c0) ?c1) ?c1)))", "(< (+ (% (+ ?x ?c0) ?c1) ?z) (+ ?w ?c0))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule246, "(< (* (/ (+ ?x ?c0) ?c1) ?c1) (+ ?x ?z))", "(< ?c0 (+ (% (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule247, "(< (* (/ (+ ?x ?c0) ?c1) ?c1) (+ ?z ?x))", "(< ?c0 (+ (% (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule248, "(< (+ ?x ?z) (* (/ (+ ?x ?c0) ?c1) ?c1))", "(< (+ (% (+ ?x ?c0) ?c1) ?z) ?c0)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule249, "(< (+ ?z ?x) (* (/ (+ ?x ?c0) ?c1) ?c1))", "(< (+ (% (+ ?x ?c0) ?c1) ?z) ?c0)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule252, "(< (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?w) ?x)", "(< (+ ?w ?c0) (% (+ ?x ?c0) ?c1))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule253, "(< (+ ?w (* (/ (+ ?x ?c0) ?c1) ?c1)) ?x)", "(< (+ ?w ?c0) (% (+ ?x ?c0) ?c1))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule254, "(< ?x (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?w))", "(< (% (+ ?x ?c0) ?c1) (+ ?w ?c0))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule255, "(< ?x (+ ?w (* (/ (+ ?x ?c0) ?c1) ?c1)))", "(< (% (+ ?x ?c0) ?c1) (+ ?w ?c0))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule258, "(< (+ (* (/ ?x ?c1) ?c1) ?w) (+ ?x ?z))", "(< ?w (+ (% ?x ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule259, "(< (+ ?w (* (/ ?x ?c1) ?c1)) (+ ?x ?z))", "(< ?w (+ (% ?x ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule260, "(< (+ (* (/ ?x ?c1) ?c1) ?w) (+ ?z ?x))", "(< ?w (+ (% ?x ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule261, "(< (+ ?w (* (/ ?x ?c1) ?c1)) (+ ?z ?x))", "(< ?w (+ (% ?x ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule262, "(< (+ ?x ?z) (+ (* (/ ?x ?c1) ?c1) ?w))", "(< (+ (% ?x ?c1) ?z) ?w)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule263, "(< (+ ?x ?z) (+ ?w (* (/ ?x ?c1) ?c1)))", "(< (+ (% ?x ?c1) ?z) ?w)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule264, "(< (+ ?z ?x) (+ (* (/ ?x ?c1) ?c1) ?w))", "(< (+ (% ?x ?c1) ?z) ?w)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule265, "(< (+ ?z ?x) (+ ?w (* (/ ?x ?c1) ?c1)))", "(< (+ (% ?x ?c1) ?z) ?w)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule268, "(< (* (/ (+ ?x ?c0) ?c1) ?c1) ?x)", "(< ?c0 (% (+ ?x ?c0) ?c1))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule269, "(< ?x (* (/ (+ ?x ?c0) ?c1) ?c1))", "(< (% (+ ?x ?c0) ?c1) ?c0)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule272, "(< (* (/ ?x ?c1) ?c1) (+ ?x ?z))", "(< 0 (+ (% ?x ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule273, "(< (* (/ ?x ?c1) ?c1) (+ ?z ?x))", "(< 0 (+ (% ?x ?c1) ?z))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule274, "(< (+ ?x ?z) (* (/ ?x ?c1) ?c1))", "(< (+ (% ?x ?c1) ?z) 0)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule275, "(< (+ ?z ?x) (* (/ ?x ?c1) ?c1))", "(< (+ (% ?x ?c1) ?z) 0)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule278, "(< (+ (* (/ ?x ?c1) ?c1) ?w) ?x)", "(< ?w (% ?x ?c1))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule279, "(< (+ ?w (* (/ ?x ?c1) ?c1)) ?x)", "(< ?w (% ?x ?c1))", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule280, "(< ?x (+ (* (/ ?x ?c1) ?c1) ?w))", "(< (% ?x ?c1) ?w)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule281, "(< ?x (+ ?w (* (/ ?x ?c1) ?c1)))", "(< (% ?x ?c1) ?w)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule284, "(< (* (/ ?x ?c1) ?c1) ?x)", "(!= (% ?x ?c1) 0)", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule285, "(< ?x (* (/ ?x ?c1) ?c1))", "F", "(> ?c1 0)", "T"}
-conditional_rule! {ltrule288, "(< (/ (+ ?x ?c1) ?c0) (/ (+ ?x ?c2) ?c0))", "F", "(>= (> ?c0 (&& 0 ?c1)) ?c2)", "T"}
-conditional_rule! {ltrule289, "(< (/ (+ ?x ?c1) ?c0) (/ (+ ?x ?c2) ?c0))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- ?c2 ?c0))", "T"}
-conditional_rule! {ltrule291, "(< (/ ?x ?c0) (/ (+ ?x ?c2) ?c0))", "F", "(>= (> ?c0 (&& 0 0)) ?c2)", "T"}
-conditional_rule! {ltrule292, "(< (/ ?x ?c0) (/ (+ ?x ?c2) ?c0))", "T", "(<= (> ?c0 (&& 0 0)) (- ?c2 ?c0))", "T"}
-conditional_rule! {ltrule294, "(< (/ (+ ?x ?c1) ?c0) (/ ?x ?c0))", "F", "(>= (> ?c0 (&& 0 ?c1)) 0)", "T"}
-conditional_rule! {ltrule295, "(< (/ (+ ?x ?c1) ?c0) (/ ?x ?c0))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- 0 ?c0))", "T"}
-conditional_rule! {ltrule298, "(< (/ (+ ?x ?c1) ?c0) (+ (/ ?x ?c0) ?c2))", "F", "(>= (> ?c0 (&& 0 ?c1)) (* ?c2 ?c0))", "T"}
-conditional_rule! {ltrule299, "(< (/ (+ ?x ?c1) ?c0) (+ (/ ?x ?c0) ?c2))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- (* ?c2 ?c0) ?c0))", "T"}
-conditional_rule! {ltrule302, "(< (/ (+ ?x ?c1) ?c0) (+ (min (/ ?x ?c0) ?y) ?c2))", "F", "(>= (> ?c0 (&& 0 ?c1)) (* ?c2 ?c0))", "T"}
-conditional_rule! {ltrule303, "(< (/ (+ ?x ?c1) ?c0) (+ (max (/ ?x ?c0) ?y) ?c2))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- (* ?c2 ?c0) ?c0))", "T"}
-conditional_rule! {ltrule304, "(< (/ (+ ?x ?c1) ?c0) (min (/ (+ ?x ?c2) ?c0) ?y))", "F", "(>= (> ?c0 (&& 0 ?c1)) ?c2)", "T"}
-conditional_rule! {ltrule305, "(< (/ (+ ?x ?c1) ?c0) (max (/ (+ ?x ?c2) ?c0) ?y))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- ?c2 ?c0))", "T"}
-conditional_rule! {ltrule306, "(< (/ (+ ?x ?c1) ?c0) (min (/ ?x ?c0) ?y))", "F", "(>= (> ?c0 (&& 0 ?c1)) 0)", "T"}
-conditional_rule! {ltrule307, "(< (/ (+ ?x ?c1) ?c0) (max (/ ?x ?c0) ?y))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- 0 ?c0))", "T"}
-conditional_rule! {ltrule309, "(< (/ (+ ?x ?c1) ?c0) (+ (min ?y (/ ?x ?c0)) ?c2))", "F", "(>= (> ?c0 (&& 0 ?c1)) (* ?c2 ?c0))", "T"}
-conditional_rule! {ltrule310, "(< (/ (+ ?x ?c1) ?c0) (+ (max ?y (/ ?x ?c0)) ?c2))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- (* ?c2 ?c0) ?c0))", "T"}
-conditional_rule! {ltrule311, "(< (/ (+ ?x ?c1) ?c0) (min ?y (/ (+ ?x ?c2) ?c0)))", "F", "(>= (> ?c0 (&& 0 ?c1)) ?c2)", "T"}
-conditional_rule! {ltrule312, "(< (/ (+ ?x ?c1) ?c0) (max ?y (/ (+ ?x ?c2) ?c0)))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- ?c2 ?c0))", "T"}
-conditional_rule! {ltrule313, "(< (/ (+ ?x ?c1) ?c0) (min ?y (/ ?x ?c0)))", "F", "(>= (> ?c0 (&& 0 ?c1)) 0)", "T"}
-conditional_rule! {ltrule314, "(< (/ (+ ?x ?c1) ?c0) (max ?y (/ ?x ?c0)))", "T", "(<= (> ?c0 (&& 0 ?c1)) (- 0 ?c0))", "T"}
-conditional_rule! {ltrule316, "(< (max (/ (+ ?x ?c2) ?c0) ?y) (/ (+ ?x ?c1) ?c0))", "F", "(>= (> ?c0 (&& 0 ?c2)) ?c1)", "T"}
-conditional_rule! {ltrule317, "(< (min (/ (+ ?x ?c2) ?c0) ?y) (/ (+ ?x ?c1) ?c0))", "T", "(<= (> ?c0 (&& 0 ?c2)) (- ?c1 ?c0))", "T"}
-conditional_rule! {ltrule318, "(< (max (/ ?x ?c0) ?y) (/ (+ ?x ?c1) ?c0))", "F", "(>= (> ?c0 (&& 0 0)) ?c1)", "T"}
-conditional_rule! {ltrule319, "(< (min (/ ?x ?c0) ?y) (/ (+ ?x ?c1) ?c0))", "T", "(<= (> ?c0 (&& 0 0)) (- ?c1 ?c0))", "T"}
-conditional_rule! {ltrule320, "(< (max ?y (/ (+ ?x ?c2) ?c0)) (/ (+ ?x ?c1) ?c0))", "F", "(>= (> ?c0 (&& 0 ?c2)) ?c1)", "T"}
-conditional_rule! {ltrule321, "(< (min ?y (/ (+ ?x ?c2) ?c0)) (/ (+ ?x ?c1) ?c0))", "T", "(<= (> ?c0 (&& 0 ?c2)) (- ?c1 ?c0))", "T"}
-conditional_rule! {ltrule322, "(< (max ?y (/ ?x ?c0)) (/ (+ ?x ?c1) ?c0))", "F", "(>= (> ?c0 (&& 0 0)) ?c1)", "T"}
-conditional_rule! {ltrule323, "(< (min ?y (/ ?x ?c0)) (/ (+ ?x ?c1) ?c0))", "T", "(<= (> ?c0 (&& 0 0)) (- ?c1 ?c0))", "T"}
-conditional_rule! {ltrule326, "(< (max (/ (+ ?x ?c2) ?c0) ?y) (+ (/ ?x ?c0) ?c1))", "F", "(>= (> ?c0 (&& 0 ?c2)) (* ?c1 ?c0))", "T"}
-conditional_rule! {ltrule327, "(< (min (/ (+ ?x ?c2) ?c0) ?y) (+ (/ ?x ?c0) ?c1))", "T", "(<= (> ?c0 (&& 0 ?c2)) (- (* ?c1 ?c0) ?c0))", "T"}
-conditional_rule! {ltrule328, "(< (max ?y (/ (+ ?x ?c2) ?c0)) (+ (/ ?x ?c0) ?c1))", "F", "(>= (> ?c0 (&& 0 ?c2)) (* ?c1 ?c0))", "T"}
-conditional_rule! {ltrule329, "(< (min ?y (/ (+ ?x ?c2) ?c0)) (+ (/ ?x ?c0) ?c1))", "T", "(<= (> ?c0 (&& 0 ?c2)) (- (* ?c1 ?c0) ?c0))", "T"}
-conditional_rule! {ltrule332, "(< (/ ?x ?c0) (min (/ (+ ?x ?c2) ?c0) ?y))", "F", "(< (> ?c0 (&& 0 ?c2)) 0)", "T"}
-conditional_rule! {ltrule333, "(< (/ ?x ?c0) (max (/ (+ ?x ?c2) ?c0) ?y))", "T", "(<= (> ?c0 (&& 0 ?c0)) ?c2)", "T"}
-conditional_rule! {ltrule334, "(< (/ ?x ?c0) (min ?y (/ (+ ?x ?c2) ?c0)))", "F", "(< (> ?c0 (&& 0 ?c2)) 0)", "T"}
-conditional_rule! {ltrule335, "(< (/ ?x ?c0) (max ?y (/ (+ ?x ?c2) ?c0)))", "T", "(<= (> ?c0 (&& 0 ?c0)) ?c2)", "T"}
-conditional_rule! {ltrule336, "(< (max (/ (+ ?x ?c2) ?c0) ?y) (/ ?x ?c0))", "F", "(>= (> ?c0 (&& 0 ?c2)) 0)", "T"}
-conditional_rule! {ltrule337, "(< (min (/ (+ ?x ?c2) ?c0) ?y) (/ ?x ?c0))", "T", "(<= (> ?c0 (&& 0 (+ ?c2 ?c0))) 0)", "T"}
-conditional_rule! {ltrule338, "(< (max ?y (/ (+ ?x ?c2) ?c0)) (/ ?x ?c0))", "F", "(>= (> ?c0 (&& 0 ?c2)) 0)", "T"}
-conditional_rule! {ltrule339, "(< (min ?y (/ (+ ?x ?c2) ?c0)) (/ ?x ?c0))", "T", "(<= (> ?c0 (&& 0 (+ ?c2 ?c0))) 0)", "T"}
+rule! {ltrule190, "(< (min ?y ?c0) ?c1)", "(< (or (< ?c0 ?c1) ?y) ?c1)"}
+rule! {ltrule191, "(< (max ?y ?c0) ?c1)", "(< (and (< ?c0 ?c1) ?y) ?c1)"}
+rule! {ltrule192, "(< ?c1 (min ?y ?c0))", "(< (and (< ?c1 ?c0) ?c1) ?y)"}
+rule! {ltrule193, "(< ?c1 (max ?y ?c0))", "(< (or (< ?c1 ?c0) ?c1) ?y)"}
+conditional_rule! {ltrule198, "(< ?x (select ?y (+ ?x ?c0) ?z))", "(and (not ?y) (< ?x ?z))", "(<= ?c0 0)", "T"}
+conditional_rule! {ltrule199, "(< ?x (select ?y (+ ?x ?c0) ?z))", "(or ?y (< ?x ?z))", "(> ?c0 0)", "T"}
+conditional_rule! {ltrule200, "(< ?x (select ?y ?z (+ ?x ?c0)))", "(and ?y (< ?x ?z))", "(<= ?c0 0)", "T"}
+conditional_rule! {ltrule201, "(< ?x (select ?y ?z (+ ?x ?c0)))", "(or (not ?y) (< ?x ?z))", "(> ?c0 0)", "T"}
+conditional_rule! {ltrule203, "(< ?x (+ (select ?y (+ ?x ?c0) ?z) ?c1))", "(and (not ?y) (< ?x (+ ?z ?c1)))", "(<= (+ ?c0 ?c1) 0)", "T"}
+conditional_rule! {ltrule204, "(< ?x (+ (select ?y (+ ?x ?c0) ?z) ?c1))", "(or ?y (< ?x (+ ?z ?c1)))", "(> (+ ?c0 ?c1) 0)", "T"}
+conditional_rule! {ltrule205, "(< ?x (+ (select ?y ?z (+ ?x ?c0)) ?c1))", "(and ?y (< ?x (+ ?z ?c1)))", "(<= (+ ?c0 ?c1) 0)", "T"}
+conditional_rule! {ltrule206, "(< ?x (+ (select ?y ?z (+ ?x ?c0)) ?c1))", "(or (not ?y) (< ?x (+ ?z ?c1)))", "(> (+ ?c0 ?c1) 0)", "T"}
+conditional_rule! {ltrule208, "(< (select ?y (+ ?x ?c0) ?z) ?x)", "(and (not ?y) (< ?z ?x))", "(>= ?c0 0)", "T"}
+conditional_rule! {ltrule209, "(< (select ?y (+ ?x ?c0) ?z) ?x)", "(or ?y (< ?z ?x))", "(< ?c0 0)", "T"}
+conditional_rule! {ltrule210, "(< (select ?y ?z (+ ?x ?c0)) ?x)", "(and ?y (< ?z ?x))", "(>= ?c0 0)", "T"}
+conditional_rule! {ltrule211, "(< (select ?y ?z (+ ?x ?c0)) ?x)", "(or (not ?y) (< ?z ?x))", "(< ?c0 0)", "T"}
+conditional_rule! {ltrule213, "(< (select ?y (+ ?x ?c0) ?z) (+ ?x ?c1))", "(and (not ?y) (< ?z (+ ?x ?c1)))", "(>= ?c0 ?c1)", "T"}
+conditional_rule! {ltrule214, "(< (select ?y (+ ?x ?c0) ?z) (+ ?x ?c1))", "(or ?y (< ?z (+ ?x ?c1)))", "(< ?c0 ?c1)", "T"}
+conditional_rule! {ltrule215, "(< (select ?y ?z (+ ?x ?c0)) (+ ?x ?c1))", "(and ?y (< ?z (+ ?x ?c1)))", "(>= ?c0 ?c1)", "T"}
+conditional_rule! {ltrule216, "(< (select ?y ?z (+ ?x ?c0)) (+ ?x ?c1))", "(or (not ?y) (< ?z (+ ?x ?c1)))", "(< ?c0 ?c1)", "T"}
+conditional_rule! {ltrule222, "(< (* ?x ?c0) (* ?y ?c1))", "(< ?x (* ?y (div ?c1 ?c0)))", "(= (mod ?c1 ?c0) (> (and 0 ?c0) 0))", "T"}
+conditional_rule! {ltrule223, "(< (* ?x ?c0) (* ?y ?c1))", "(< (* ?x (div ?c0 ?c1)) ?y)", "(= (mod ?c0 ?c1) (> (and 0 ?c1) 0))", "T"}
+conditional_rule! {ltrule225, "(< (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(< ?x (+ ?y (div (- (+ ?c1 ?c0) 1) ?c0)))", "(> ?c0 0)", "T"}
+conditional_rule! {ltrule226, "(< (+ (* ?x ?c0) ?c1) (* ?y ?c0))", "(< (+ ?x (div ?c1 ?c0)) ?y)", "(> ?c0 0)", "T"}
+conditional_rule! {ltrule236, "(< (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?w) (+ ?x ?z))", "(< (+ ?w ?c0) (+ (mod (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule237, "(< (+ ?w (* (div (+ ?x ?c0) ?c1) ?c1)) (+ ?x ?z))", "(< (+ ?w ?c0) (+ (mod (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule238, "(< (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?w) (+ ?z ?x))", "(< (+ ?w ?c0) (+ (mod (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule239, "(< (+ ?w (* (div (+ ?x ?c0) ?c1) ?c1)) (+ ?z ?x))", "(< (+ ?w ?c0) (+ (mod (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule240, "(< (+ ?x ?z) (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?w))", "(< (+ (mod (+ ?x ?c0) ?c1) ?z) (+ ?w ?c0))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule241, "(< (+ ?x ?z) (+ ?w (* (div (+ ?x ?c0) ?c1) ?c1)))", "(< (+ (mod (+ ?x ?c0) ?c1) ?z) (+ ?w ?c0))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule242, "(< (+ ?z ?x) (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?w))", "(< (+ (mod (+ ?x ?c0) ?c1) ?z) (+ ?w ?c0))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule243, "(< (+ ?z ?x) (+ ?w (* (div (+ ?x ?c0) ?c1) ?c1)))", "(< (+ (mod (+ ?x ?c0) ?c1) ?z) (+ ?w ?c0))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule246, "(< (* (div (+ ?x ?c0) ?c1) ?c1) (+ ?x ?z))", "(< ?c0 (+ (mod (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule247, "(< (* (div (+ ?x ?c0) ?c1) ?c1) (+ ?z ?x))", "(< ?c0 (+ (mod (+ ?x ?c0) ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule248, "(< (+ ?x ?z) (* (div (+ ?x ?c0) ?c1) ?c1))", "(< (+ (mod (+ ?x ?c0) ?c1) ?z) ?c0)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule249, "(< (+ ?z ?x) (* (div (+ ?x ?c0) ?c1) ?c1))", "(< (+ (mod (+ ?x ?c0) ?c1) ?z) ?c0)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule252, "(< (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?w) ?x)", "(< (+ ?w ?c0) (mod (+ ?x ?c0) ?c1))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule253, "(< (+ ?w (* (div (+ ?x ?c0) ?c1) ?c1)) ?x)", "(< (+ ?w ?c0) (mod (+ ?x ?c0) ?c1))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule254, "(< ?x (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?w))", "(< (mod (+ ?x ?c0) ?c1) (+ ?w ?c0))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule255, "(< ?x (+ ?w (* (div (+ ?x ?c0) ?c1) ?c1)))", "(< (mod (+ ?x ?c0) ?c1) (+ ?w ?c0))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule258, "(< (+ (* (div ?x ?c1) ?c1) ?w) (+ ?x ?z))", "(< ?w (+ (mod ?x ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule259, "(< (+ ?w (* (div ?x ?c1) ?c1)) (+ ?x ?z))", "(< ?w (+ (mod ?x ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule260, "(< (+ (* (div ?x ?c1) ?c1) ?w) (+ ?z ?x))", "(< ?w (+ (mod ?x ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule261, "(< (+ ?w (* (div ?x ?c1) ?c1)) (+ ?z ?x))", "(< ?w (+ (mod ?x ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule262, "(< (+ ?x ?z) (+ (* (div ?x ?c1) ?c1) ?w))", "(< (+ (mod ?x ?c1) ?z) ?w)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule263, "(< (+ ?x ?z) (+ ?w (* (div ?x ?c1) ?c1)))", "(< (+ (mod ?x ?c1) ?z) ?w)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule264, "(< (+ ?z ?x) (+ (* (div ?x ?c1) ?c1) ?w))", "(< (+ (mod ?x ?c1) ?z) ?w)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule265, "(< (+ ?z ?x) (+ ?w (* (div ?x ?c1) ?c1)))", "(< (+ (mod ?x ?c1) ?z) ?w)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule268, "(< (* (div (+ ?x ?c0) ?c1) ?c1) ?x)", "(< ?c0 (mod (+ ?x ?c0) ?c1))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule269, "(< ?x (* (div (+ ?x ?c0) ?c1) ?c1))", "(< (mod (+ ?x ?c0) ?c1) ?c0)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule272, "(< (* (div ?x ?c1) ?c1) (+ ?x ?z))", "(< 0 (+ (mod ?x ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule273, "(< (* (div ?x ?c1) ?c1) (+ ?z ?x))", "(< 0 (+ (mod ?x ?c1) ?z))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule274, "(< (+ ?x ?z) (* (div ?x ?c1) ?c1))", "(< (+ (mod ?x ?c1) ?z) 0)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule275, "(< (+ ?z ?x) (* (div ?x ?c1) ?c1))", "(< (+ (mod ?x ?c1) ?z) 0)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule278, "(< (+ (* (div ?x ?c1) ?c1) ?w) ?x)", "(< ?w (mod ?x ?c1))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule279, "(< (+ ?w (* (div ?x ?c1) ?c1)) ?x)", "(< ?w (mod ?x ?c1))", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule280, "(< ?x (+ (* (div ?x ?c1) ?c1) ?w))", "(< (mod ?x ?c1) ?w)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule281, "(< ?x (+ ?w (* (div ?x ?c1) ?c1)))", "(< (mod ?x ?c1) ?w)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule284, "(< (* (div ?x ?c1) ?c1) ?x)", "(!= (mod ?x ?c1) 0)", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule285, "(< ?x (* (div ?x ?c1) ?c1))", "F", "(> ?c1 0)", "T"}
+conditional_rule! {ltrule288, "(< (div (+ ?x ?c1) ?c0) (div (+ ?x ?c2) ?c0))", "F", "(>= (> ?c0 (and 0 ?c1)) ?c2)", "T"}
+conditional_rule! {ltrule289, "(< (div (+ ?x ?c1) ?c0) (div (+ ?x ?c2) ?c0))", "T", "(<= (> ?c0 (and 0 ?c1)) (- ?c2 ?c0))", "T"}
+conditional_rule! {ltrule291, "(< (div ?x ?c0) (div (+ ?x ?c2) ?c0))", "F", "(>= (> ?c0 (and 0 0)) ?c2)", "T"}
+conditional_rule! {ltrule292, "(< (div ?x ?c0) (div (+ ?x ?c2) ?c0))", "T", "(<= (> ?c0 (and 0 0)) (- ?c2 ?c0))", "T"}
+conditional_rule! {ltrule294, "(< (div (+ ?x ?c1) ?c0) (div ?x ?c0))", "F", "(>= (> ?c0 (and 0 ?c1)) 0)", "T"}
+conditional_rule! {ltrule295, "(< (div (+ ?x ?c1) ?c0) (div ?x ?c0))", "T", "(<= (> ?c0 (and 0 ?c1)) (- 0 ?c0))", "T"}
+conditional_rule! {ltrule298, "(< (div (+ ?x ?c1) ?c0) (+ (div ?x ?c0) ?c2))", "F", "(>= (> ?c0 (and 0 ?c1)) (* ?c2 ?c0))", "T"}
+conditional_rule! {ltrule299, "(< (div (+ ?x ?c1) ?c0) (+ (div ?x ?c0) ?c2))", "T", "(<= (> ?c0 (and 0 ?c1)) (- (* ?c2 ?c0) ?c0))", "T"}
+conditional_rule! {ltrule302, "(< (div (+ ?x ?c1) ?c0) (+ (min (div ?x ?c0) ?y) ?c2))", "F", "(>= (> ?c0 (and 0 ?c1)) (* ?c2 ?c0))", "T"}
+conditional_rule! {ltrule303, "(< (div (+ ?x ?c1) ?c0) (+ (max (div ?x ?c0) ?y) ?c2))", "T", "(<= (> ?c0 (and 0 ?c1)) (- (* ?c2 ?c0) ?c0))", "T"}
+conditional_rule! {ltrule304, "(< (div (+ ?x ?c1) ?c0) (min (div (+ ?x ?c2) ?c0) ?y))", "F", "(>= (> ?c0 (and 0 ?c1)) ?c2)", "T"}
+conditional_rule! {ltrule305, "(< (div (+ ?x ?c1) ?c0) (max (div (+ ?x ?c2) ?c0) ?y))", "T", "(<= (> ?c0 (and 0 ?c1)) (- ?c2 ?c0))", "T"}
+conditional_rule! {ltrule306, "(< (div (+ ?x ?c1) ?c0) (min (div ?x ?c0) ?y))", "F", "(>= (> ?c0 (and 0 ?c1)) 0)", "T"}
+conditional_rule! {ltrule307, "(< (div (+ ?x ?c1) ?c0) (max (div ?x ?c0) ?y))", "T", "(<= (> ?c0 (and 0 ?c1)) (- 0 ?c0))", "T"}
+conditional_rule! {ltrule309, "(< (div (+ ?x ?c1) ?c0) (+ (min ?y (div ?x ?c0)) ?c2))", "F", "(>= (> ?c0 (and 0 ?c1)) (* ?c2 ?c0))", "T"}
+conditional_rule! {ltrule310, "(< (div (+ ?x ?c1) ?c0) (+ (max ?y (div ?x ?c0)) ?c2))", "T", "(<= (> ?c0 (and 0 ?c1)) (- (* ?c2 ?c0) ?c0))", "T"}
+conditional_rule! {ltrule311, "(< (div (+ ?x ?c1) ?c0) (min ?y (div (+ ?x ?c2) ?c0)))", "F", "(>= (> ?c0 (and 0 ?c1)) ?c2)", "T"}
+conditional_rule! {ltrule312, "(< (div (+ ?x ?c1) ?c0) (max ?y (div (+ ?x ?c2) ?c0)))", "T", "(<= (> ?c0 (and 0 ?c1)) (- ?c2 ?c0))", "T"}
+conditional_rule! {ltrule313, "(< (div (+ ?x ?c1) ?c0) (min ?y (div ?x ?c0)))", "F", "(>= (> ?c0 (and 0 ?c1)) 0)", "T"}
+conditional_rule! {ltrule314, "(< (div (+ ?x ?c1) ?c0) (max ?y (div ?x ?c0)))", "T", "(<= (> ?c0 (and 0 ?c1)) (- 0 ?c0))", "T"}
+conditional_rule! {ltrule316, "(< (max (div (+ ?x ?c2) ?c0) ?y) (div (+ ?x ?c1) ?c0))", "F", "(>= (> ?c0 (and 0 ?c2)) ?c1)", "T"}
+conditional_rule! {ltrule317, "(< (min (div (+ ?x ?c2) ?c0) ?y) (div (+ ?x ?c1) ?c0))", "T", "(<= (> ?c0 (and 0 ?c2)) (- ?c1 ?c0))", "T"}
+conditional_rule! {ltrule318, "(< (max (div ?x ?c0) ?y) (div (+ ?x ?c1) ?c0))", "F", "(>= (> ?c0 (and 0 0)) ?c1)", "T"}
+conditional_rule! {ltrule319, "(< (min (div ?x ?c0) ?y) (div (+ ?x ?c1) ?c0))", "T", "(<= (> ?c0 (and 0 0)) (- ?c1 ?c0))", "T"}
+conditional_rule! {ltrule320, "(< (max ?y (div (+ ?x ?c2) ?c0)) (div (+ ?x ?c1) ?c0))", "F", "(>= (> ?c0 (and 0 ?c2)) ?c1)", "T"}
+conditional_rule! {ltrule321, "(< (min ?y (div (+ ?x ?c2) ?c0)) (div (+ ?x ?c1) ?c0))", "T", "(<= (> ?c0 (and 0 ?c2)) (- ?c1 ?c0))", "T"}
+conditional_rule! {ltrule322, "(< (max ?y (div ?x ?c0)) (div (+ ?x ?c1) ?c0))", "F", "(>= (> ?c0 (and 0 0)) ?c1)", "T"}
+conditional_rule! {ltrule323, "(< (min ?y (div ?x ?c0)) (div (+ ?x ?c1) ?c0))", "T", "(<= (> ?c0 (and 0 0)) (- ?c1 ?c0))", "T"}
+conditional_rule! {ltrule326, "(< (max (div (+ ?x ?c2) ?c0) ?y) (+ (div ?x ?c0) ?c1))", "F", "(>= (> ?c0 (and 0 ?c2)) (* ?c1 ?c0))", "T"}
+conditional_rule! {ltrule327, "(< (min (div (+ ?x ?c2) ?c0) ?y) (+ (div ?x ?c0) ?c1))", "T", "(<= (> ?c0 (and 0 ?c2)) (- (* ?c1 ?c0) ?c0))", "T"}
+conditional_rule! {ltrule328, "(< (max ?y (div (+ ?x ?c2) ?c0)) (+ (div ?x ?c0) ?c1))", "F", "(>= (> ?c0 (and 0 ?c2)) (* ?c1 ?c0))", "T"}
+conditional_rule! {ltrule329, "(< (min ?y (div (+ ?x ?c2) ?c0)) (+ (div ?x ?c0) ?c1))", "T", "(<= (> ?c0 (and 0 ?c2)) (- (* ?c1 ?c0) ?c0))", "T"}
+conditional_rule! {ltrule332, "(< (div ?x ?c0) (min (div (+ ?x ?c2) ?c0) ?y))", "F", "(< (> ?c0 (and 0 ?c2)) 0)", "T"}
+conditional_rule! {ltrule333, "(< (div ?x ?c0) (max (div (+ ?x ?c2) ?c0) ?y))", "T", "(<= (> ?c0 (and 0 ?c0)) ?c2)", "T"}
+conditional_rule! {ltrule334, "(< (div ?x ?c0) (min ?y (div (+ ?x ?c2) ?c0)))", "F", "(< (> ?c0 (and 0 ?c2)) 0)", "T"}
+conditional_rule! {ltrule335, "(< (div ?x ?c0) (max ?y (div (+ ?x ?c2) ?c0)))", "T", "(<= (> ?c0 (and 0 ?c0)) ?c2)", "T"}
+conditional_rule! {ltrule336, "(< (max (div (+ ?x ?c2) ?c0) ?y) (div ?x ?c0))", "F", "(>= (> ?c0 (and 0 ?c2)) 0)", "T"}
+conditional_rule! {ltrule337, "(< (min (div (+ ?x ?c2) ?c0) ?y) (div ?x ?c0))", "T", "(<= (> ?c0 (and 0 (+ ?c2 ?c0))) 0)", "T"}
+conditional_rule! {ltrule338, "(< (max ?y (div (+ ?x ?c2) ?c0)) (div ?x ?c0))", "F", "(>= (> ?c0 (and 0 ?c2)) 0)", "T"}
+conditional_rule! {ltrule339, "(< (min ?y (div (+ ?x ?c2) ?c0)) (div ?x ?c0))", "T", "(<= (> ?c0 (and 0 (+ ?c2 ?c0))) 0)", "T"}
 conditional_rule! {ltrule342, "(< (min ?x ?c0) (min ?x ?c1))", "F", "(>= ?c0 ?c1)", "T"}
 conditional_rule! {ltrule343, "(< (min ?x ?c0) (+ (min ?x ?c1) ?c2))", "F", "(>= ?c0 (+ ?c1 ?c2))", "T"}
 conditional_rule! {ltrule344, "(< (max ?x ?c0) (max ?x ?c1))", "F", "(>= ?c0 ?c1)", "T"}
 conditional_rule! {ltrule345, "(< (max ?x ?c0) (+ (max ?x ?c1) ?c2))", "F", "(>= ?c0 (+ ?c1 ?c2))", "T"}
 rule! {maxrule45, "(max ?x ?x)", "?x"}
 rule! {maxrule46, "(max ?c0 ?c1)", "(max ?c0 ?c1)"}
-conditional_rule! {maxrule60, "(max (* (/ ?x ?c0) ?c0) ?x)", "?x", "(> ?c0 0)", "T"}
-conditional_rule! {maxrule62, "(max ?x (* (/ ?x ?c0) ?c0))", "?x", "(> ?c0 0)", "T"}
+conditional_rule! {maxrule60, "(max (* (div ?x ?c0) ?c0) ?x)", "?x", "(> ?c0 0)", "T"}
+conditional_rule! {maxrule62, "(max ?x (* (div ?x ?c0) ?c0))", "?x", "(> ?c0 0)", "T"}
 rule! {maxrule64, "(max (max ?x ?y) ?x)", "(max ?x ?y)"}
 rule! {maxrule66, "(max (max ?x ?y) ?y)", "(max ?x ?y)"}
 rule! {maxrule68, "(max (max (max ?x ?y) ?z) ?x)", "(max (max ?x ?y) ?z)"}
@@ -531,17 +531,17 @@ rule! {maxrule86, "(max (max ?x ?y) (min ?y ?x))", "(max ?x ?y)"}
 rule! {maxrule88, "(max (min ?x ?y) ?x)", "?x"}
 rule! {maxrule90, "(max (min ?y ?x) ?x)", "?x"}
 conditional_rule! {maxrule92, "(max (min ?x ?c0) ?c1)", "?c1", "(>= ?c1 ?c0)", "T"}
-conditional_rule! {maxrule110, "(max (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2) ?x)", "(+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2)", "(>= (> ?c1 (&& 0 (+ ?c0 ?c2))) (- ?c1 1))", "T"}
-conditional_rule! {maxrule112, "(max ?x (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2))", "(+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2)", "(>= (> ?c1 (&& 0 (+ ?c0 ?c2))) (- ?c1 1))", "T"}
-conditional_rule! {maxrule114, "(max (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2) ?x)", "?x", "(<= (> ?c1 (&& 0 (+ ?c0 ?c2))) 0)", "T"}
-conditional_rule! {maxrule116, "(max ?x (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2))", "?x", "(<= (> ?c1 (&& 0 (+ ?c0 ?c2))) 0)", "T"}
-conditional_rule! {maxrule119, "(max (+ (* (/ ?x ?c1) ?c1) ?c2) ?x)", "(+ (* (/ ?x ?c1) ?c1) ?c2)", "(>= (> ?c1 (&& 0 ?c2)) (- ?c1 1))", "T"}
-conditional_rule! {maxrule121, "(max ?x (+ (* (/ ?x ?c1) ?c1) ?c2))", "(+ (* (/ ?x ?c1) ?c1) ?c2)", "(>= (> ?c1 (&& 0 ?c2)) (- ?c1 1))", "T"}
-conditional_rule! {maxrule123, "(max (* (/ (+ ?x ?c0) ?c1) ?c1) ?x)", "(* (/ (+ ?x ?c0) ?c1) ?c1)", "(>= (> ?c1 (&& 0 ?c0)) (- ?c1 1))", "T"}
-conditional_rule! {maxrule125, "(max ?x (* (/ (+ ?x ?c0) ?c1) ?c1))", "(* (/ (+ ?x ?c0) ?c1) ?c1)", "(>= (> ?c1 (&& 0 ?c0)) (- ?c1 1))", "T"}
-conditional_rule! {maxrule127, "(max (+ (* (/ ?x ?c1) ?c1) ?c2) ?x)", "?x", "(<= (> ?c1 (&& 0 ?c2)) 0)", "T"}
-conditional_rule! {maxrule129, "(max ?x (+ (* (/ ?x ?c1) ?c1) ?c2))", "?x", "(<= (> ?c1 (&& 0 ?c2)) 0)", "T"}
-conditional_rule! {maxrule131, "(max (* (/ (+ ?x ?c0) ?c1) ?c1) ?x)", "?x", "(<= (> ?c1 (&& 0 ?c0)) 0)", "T"}
+conditional_rule! {maxrule110, "(max (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2) ?x)", "(+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2)", "(>= (> ?c1 (and 0 (+ ?c0 ?c2))) (- ?c1 1))", "T"}
+conditional_rule! {maxrule112, "(max ?x (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2))", "(+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2)", "(>= (> ?c1 (and 0 (+ ?c0 ?c2))) (- ?c1 1))", "T"}
+conditional_rule! {maxrule114, "(max (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2) ?x)", "?x", "(<= (> ?c1 (and 0 (+ ?c0 ?c2))) 0)", "T"}
+conditional_rule! {maxrule116, "(max ?x (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2))", "?x", "(<= (> ?c1 (and 0 (+ ?c0 ?c2))) 0)", "T"}
+conditional_rule! {maxrule119, "(max (+ (* (div ?x ?c1) ?c1) ?c2) ?x)", "(+ (* (div ?x ?c1) ?c1) ?c2)", "(>= (> ?c1 (and 0 ?c2)) (- ?c1 1))", "T"}
+conditional_rule! {maxrule121, "(max ?x (+ (* (div ?x ?c1) ?c1) ?c2))", "(+ (* (div ?x ?c1) ?c1) ?c2)", "(>= (> ?c1 (and 0 ?c2)) (- ?c1 1))", "T"}
+conditional_rule! {maxrule123, "(max (* (div (+ ?x ?c0) ?c1) ?c1) ?x)", "(* (div (+ ?x ?c0) ?c1) ?c1)", "(>= (> ?c1 (and 0 ?c0)) (- ?c1 1))", "T"}
+conditional_rule! {maxrule125, "(max ?x (* (div (+ ?x ?c0) ?c1) ?c1))", "(* (div (+ ?x ?c0) ?c1) ?c1)", "(>= (> ?c1 (and 0 ?c0)) (- ?c1 1))", "T"}
+conditional_rule! {maxrule127, "(max (+ (* (div ?x ?c1) ?c1) ?c2) ?x)", "?x", "(<= (> ?c1 (and 0 ?c2)) 0)", "T"}
+conditional_rule! {maxrule129, "(max ?x (+ (* (div ?x ?c1) ?c1) ?c2))", "?x", "(<= (> ?c1 (and 0 ?c2)) 0)", "T"}
+conditional_rule! {maxrule131, "(max (* (div (+ ?x ?c0) ?c1) ?c1) ?x)", "?x", "(<= (> ?c1 (and 0 ?c0)) 0)", "T"}
 rule! {maxrule138, "(max (max ?x ?c0) ?c1)", "(max ?x (max ?c0 ?c1))"}
 rule! {maxrule139, "(max (max ?x ?c0) ?y)", "(max (max ?x ?y) ?c0)"}
 rule! {maxrule140, "(max (max ?x ?y) (max ?x ?z))", "(max (max ?y ?z) ?x)"}
@@ -609,21 +609,21 @@ rule! {maxrule217, "(max ?x (- (- ?x ?y) ?z))", "(- ?x (min 0 (+ ?y ?z)))"}
 rule! {maxrule218, "(max (+ (- ?x ?y) ?z) ?x)", "(+ (max 0 (- ?z ?y)) ?x)"}
 rule! {maxrule219, "(max (+ ?z (- ?x ?y)) ?x)", "(+ (max 0 (- ?z ?y)) ?x)"}
 rule! {maxrule220, "(max (- (- ?x ?y) ?z) ?x)", "(- ?x (min 0 (+ ?y ?z)))"}
-conditional_rule! {maxrule222, "(max (* ?x ?c0) ?c1)", "(* (max ?x (/ ?c1 ?c0)) ?c0)", "(= (> ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {maxrule223, "(max (* ?x ?c0) ?c1)", "(* (min ?x (/ ?c1 ?c0)) ?c0)", "(= (< ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {maxrule225, "(max (* ?x ?c0) (* ?y ?c1))", "(* (max ?x (* ?y (/ ?c1 ?c0))) ?c0)", "(= (> ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {maxrule226, "(max (* ?x ?c0) (* ?y ?c1))", "(* (min ?x (* ?y (/ ?c1 ?c0))) ?c0)", "(= (< ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {maxrule227, "(max (* ?x ?c0) (* ?y ?c1))", "(* (max (* ?x (/ ?c0 ?c1)) ?y) ?c1)", "(= (> ?c1 (&& 0 (% ?c0 ?c1))) 0)", "T"}
-conditional_rule! {maxrule228, "(max (* ?x ?c0) (* ?y ?c1))", "(* (min (* ?x (/ ?c0 ?c1)) ?y) ?c1)", "(= (< ?c1 (&& 0 (% ?c0 ?c1))) 0)", "T"}
-conditional_rule! {maxrule229, "(max (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(* (max ?x (+ ?y (/ ?c1 ?c0))) ?c0)", "(= (> ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {maxrule230, "(max (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(* (min ?x (+ ?y (/ ?c1 ?c0))) ?c0)", "(= (< ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {maxrule232, "(max (/ ?x ?c0) (/ ?y ?c0))", "(/ (max ?x ?y) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {maxrule233, "(max (/ ?x ?c0) (/ ?y ?c0))", "(/ (min ?x ?y) ?c0)", "(< ?c0 0)", "T"}
+conditional_rule! {maxrule222, "(max (* ?x ?c0) ?c1)", "(* (max ?x (div ?c1 ?c0)) ?c0)", "(= (> ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {maxrule223, "(max (* ?x ?c0) ?c1)", "(* (min ?x (div ?c1 ?c0)) ?c0)", "(= (< ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {maxrule225, "(max (* ?x ?c0) (* ?y ?c1))", "(* (max ?x (* ?y (div ?c1 ?c0))) ?c0)", "(= (> ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {maxrule226, "(max (* ?x ?c0) (* ?y ?c1))", "(* (min ?x (* ?y (div ?c1 ?c0))) ?c0)", "(= (< ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {maxrule227, "(max (* ?x ?c0) (* ?y ?c1))", "(* (max (* ?x (div ?c0 ?c1)) ?y) ?c1)", "(= (> ?c1 (and 0 (mod ?c0 ?c1))) 0)", "T"}
+conditional_rule! {maxrule228, "(max (* ?x ?c0) (* ?y ?c1))", "(* (min (* ?x (div ?c0 ?c1)) ?y) ?c1)", "(= (< ?c1 (and 0 (mod ?c0 ?c1))) 0)", "T"}
+conditional_rule! {maxrule229, "(max (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(* (max ?x (+ ?y (div ?c1 ?c0))) ?c0)", "(= (> ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {maxrule230, "(max (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(* (min ?x (+ ?y (div ?c1 ?c0))) ?c0)", "(= (< ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {maxrule232, "(max (div ?x ?c0) (div ?y ?c0))", "(div (max ?x ?y) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {maxrule233, "(max (div ?x ?c0) (div ?y ?c0))", "(div (min ?x ?y) ?c0)", "(< ?c0 0)", "T"}
 rule! {maxrule243, "(max (select ?x ?y ?z) (select ?x ?w ?u))", "(select ?x (max ?y ?w) (max ?z ?u))"}
 rule! {minrule45, "(min ?x ?x)", "?x"}
 rule! {minrule46, "(min ?c0 ?c1)", "(min ?c0 ?c1)"}
-conditional_rule! {minrule60, "(min (* (/ ?x ?c0) ?c0) ?x)", "(* (/ ?x ?c0) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {minrule62, "(min ?x (* (/ ?x ?c0) ?c0))", "(* (/ ?x ?c0) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {minrule60, "(min (* (div ?x ?c0) ?c0) ?x)", "(* (div ?x ?c0) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {minrule62, "(min ?x (* (div ?x ?c0) ?c0))", "(* (div ?x ?c0) ?c0)", "(> ?c0 0)", "T"}
 rule! {minrule64, "(min (min ?x ?y) ?x)", "(min ?x ?y)"}
 rule! {minrule66, "(min (min ?x ?y) ?y)", "(min ?x ?y)"}
 rule! {minrule68, "(min (min (min ?x ?y) ?z) ?x)", "(min (min ?x ?y) ?z)"}
@@ -639,17 +639,17 @@ rule! {minrule86, "(min (max ?x ?y) (min ?y ?x))", "(min ?y ?x)"}
 rule! {minrule88, "(min (max ?x ?y) ?x)", "?x"}
 rule! {minrule90, "(min (max ?y ?x) ?x)", "?x"}
 conditional_rule! {minrule92, "(min (max ?x ?c0) ?c1)", "?c1", "(<= ?c1 ?c0)", "T"}
-conditional_rule! {minrule110, "(min (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2) ?x)", "?x", "(>= (> ?c1 (&& 0 (+ ?c0 ?c2))) (- ?c1 1))", "T"}
-conditional_rule! {minrule112, "(min ?x (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2))", "?x", "(>= (> ?c1 (&& 0 (+ ?c0 ?c2))) (- ?c1 1))", "T"}
-conditional_rule! {minrule114, "(min (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2) ?x)", "(+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2)", "(<= (> ?c1 (&& 0 (+ ?c0 ?c2))) 0)", "T"}
-conditional_rule! {minrule116, "(min ?x (+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2))", "(+ (* (/ (+ ?x ?c0) ?c1) ?c1) ?c2)", "(<= (> ?c1 (&& 0 (+ ?c0 ?c2))) 0)", "T"}
-conditional_rule! {minrule119, "(min (+ (* (/ ?x ?c1) ?c1) ?c2) ?x)", "?x", "(>= (> ?c1 (&& 0 ?c2)) (- ?c1 1))", "T"}
-conditional_rule! {minrule121, "(min ?x (+ (* (/ ?x ?c1) ?c1) ?c2))", "?x", "(>= (> ?c1 (&& 0 ?c2)) (- ?c1 1))", "T"}
-conditional_rule! {minrule123, "(min (* (/ (+ ?x ?c0) ?c1) ?c1) ?x)", "?x", "(>= (> ?c1 (&& 0 ?c0)) (- ?c1 1))", "T"}
-conditional_rule! {minrule125, "(min ?x (* (/ (+ ?x ?c0) ?c1) ?c1))", "?x", "(>= (> ?c1 (&& 0 ?c0)) (- ?c1 1))", "T"}
-conditional_rule! {minrule127, "(min (+ (* (/ ?x ?c1) ?c1) ?c2) ?x)", "(+ (* (/ ?x ?c1) ?c1) ?c2)", "(<= (> ?c1 (&& 0 ?c2)) 0)", "T"}
-conditional_rule! {minrule129, "(min ?x (+ (* (/ ?x ?c1) ?c1) ?c2))", "(+ (* (/ ?x ?c1) ?c1) ?c2)", "(<= (> ?c1 (&& 0 ?c2)) 0)", "T"}
-conditional_rule! {minrule131, "(min (* (/ (+ ?x ?c0) ?c1) ?c1) ?x)", "(* (/ (+ ?x ?c0) ?c1) ?c1)", "(<= (> ?c1 (&& 0 ?c0)) 0)", "T"}
+conditional_rule! {minrule110, "(min (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2) ?x)", "?x", "(>= (> ?c1 (and 0 (+ ?c0 ?c2))) (- ?c1 1))", "T"}
+conditional_rule! {minrule112, "(min ?x (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2))", "?x", "(>= (> ?c1 (and 0 (+ ?c0 ?c2))) (- ?c1 1))", "T"}
+conditional_rule! {minrule114, "(min (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2) ?x)", "(+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2)", "(<= (> ?c1 (and 0 (+ ?c0 ?c2))) 0)", "T"}
+conditional_rule! {minrule116, "(min ?x (+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2))", "(+ (* (div (+ ?x ?c0) ?c1) ?c1) ?c2)", "(<= (> ?c1 (and 0 (+ ?c0 ?c2))) 0)", "T"}
+conditional_rule! {minrule119, "(min (+ (* (div ?x ?c1) ?c1) ?c2) ?x)", "?x", "(>= (> ?c1 (and 0 ?c2)) (- ?c1 1))", "T"}
+conditional_rule! {minrule121, "(min ?x (+ (* (div ?x ?c1) ?c1) ?c2))", "?x", "(>= (> ?c1 (and 0 ?c2)) (- ?c1 1))", "T"}
+conditional_rule! {minrule123, "(min (* (div (+ ?x ?c0) ?c1) ?c1) ?x)", "?x", "(>= (> ?c1 (and 0 ?c0)) (- ?c1 1))", "T"}
+conditional_rule! {minrule125, "(min ?x (* (div (+ ?x ?c0) ?c1) ?c1))", "?x", "(>= (> ?c1 (and 0 ?c0)) (- ?c1 1))", "T"}
+conditional_rule! {minrule127, "(min (+ (* (div ?x ?c1) ?c1) ?c2) ?x)", "(+ (* (div ?x ?c1) ?c1) ?c2)", "(<= (> ?c1 (and 0 ?c2)) 0)", "T"}
+conditional_rule! {minrule129, "(min ?x (+ (* (div ?x ?c1) ?c1) ?c2))", "(+ (* (div ?x ?c1) ?c1) ?c2)", "(<= (> ?c1 (and 0 ?c2)) 0)", "T"}
+conditional_rule! {minrule131, "(min (* (div (+ ?x ?c0) ?c1) ?c1) ?x)", "(* (div (+ ?x ?c0) ?c1) ?c1)", "(<= (> ?c1 (and 0 ?c0)) 0)", "T"}
 rule! {minrule138, "(min (min ?x ?c0) ?c1)", "(min ?x (min ?c0 ?c1))"}
 rule! {minrule139, "(min (min ?x ?c0) ?y)", "(min (min ?x ?y) ?c0)"}
 rule! {minrule140, "(min (min ?x ?y) (min ?x ?z))", "(min (min ?y ?z) ?x)"}
@@ -718,32 +718,32 @@ rule! {minrule220, "(min ?x (- (- ?x ?y) ?z))", "(- ?x (max 0 (+ ?y ?z)))"}
 rule! {minrule221, "(min (+ (- ?x ?y) ?z) ?x)", "(+ (min 0 (- ?z ?y)) ?x)"}
 rule! {minrule222, "(min (+ ?z (- ?x ?y)) ?x)", "(+ (min 0 (- ?z ?y)) ?x)"}
 rule! {minrule223, "(min (- (- ?x ?y) ?z) ?x)", "(- ?x (max 0 (+ ?y ?z)))"}
-conditional_rule! {minrule225, "(min (* ?x ?c0) ?c1)", "(* (min ?x (/ ?c1 ?c0)) ?c0)", "(= (> ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {minrule226, "(min (* ?x ?c0) ?c1)", "(* (max ?x (/ ?c1 ?c0)) ?c0)", "(= (< ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {minrule228, "(min (* ?x ?c0) (* ?y ?c1))", "(* (min ?x (* ?y (/ ?c1 ?c0))) ?c0)", "(= (> ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {minrule229, "(min (* ?x ?c0) (* ?y ?c1))", "(* (max ?x (* ?y (/ ?c1 ?c0))) ?c0)", "(= (< ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {minrule230, "(min (* ?x ?c0) (* ?y ?c1))", "(* (min (* ?x (/ ?c0 ?c1)) ?y) ?c1)", "(= (> ?c1 (&& 0 (% ?c0 ?c1))) 0)", "T"}
-conditional_rule! {minrule231, "(min (* ?x ?c0) (* ?y ?c1))", "(* (max (* ?x (/ ?c0 ?c1)) ?y) ?c1)", "(= (< ?c1 (&& 0 (% ?c0 ?c1))) 0)", "T"}
-conditional_rule! {minrule232, "(min (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(* (min ?x (+ ?y (/ ?c1 ?c0))) ?c0)", "(= (> ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {minrule233, "(min (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(* (max ?x (+ ?y (/ ?c1 ?c0))) ?c0)", "(= (< ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {minrule235, "(min (/ ?x ?c0) (/ ?y ?c0))", "(/ (min ?x ?y) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {minrule236, "(min (/ ?x ?c0) (/ ?y ?c0))", "(/ (max ?x ?y) ?c0)", "(< ?c0 0)", "T"}
+conditional_rule! {minrule225, "(min (* ?x ?c0) ?c1)", "(* (min ?x (div ?c1 ?c0)) ?c0)", "(= (> ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {minrule226, "(min (* ?x ?c0) ?c1)", "(* (max ?x (div ?c1 ?c0)) ?c0)", "(= (< ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {minrule228, "(min (* ?x ?c0) (* ?y ?c1))", "(* (min ?x (* ?y (div ?c1 ?c0))) ?c0)", "(= (> ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {minrule229, "(min (* ?x ?c0) (* ?y ?c1))", "(* (max ?x (* ?y (div ?c1 ?c0))) ?c0)", "(= (< ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {minrule230, "(min (* ?x ?c0) (* ?y ?c1))", "(* (min (* ?x (div ?c0 ?c1)) ?y) ?c1)", "(= (> ?c1 (and 0 (mod ?c0 ?c1))) 0)", "T"}
+conditional_rule! {minrule231, "(min (* ?x ?c0) (* ?y ?c1))", "(* (max (* ?x (div ?c0 ?c1)) ?y) ?c1)", "(= (< ?c1 (and 0 (mod ?c0 ?c1))) 0)", "T"}
+conditional_rule! {minrule232, "(min (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(* (min ?x (+ ?y (div ?c1 ?c0))) ?c0)", "(= (> ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {minrule233, "(min (* ?x ?c0) (+ (* ?y ?c0) ?c1))", "(* (max ?x (+ ?y (div ?c1 ?c0))) ?c0)", "(= (< ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {minrule235, "(min (div ?x ?c0) (div ?y ?c0))", "(div (min ?x ?y) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {minrule236, "(min (div ?x ?c0) (div ?y ?c0))", "(div (max ?x ?y) ?c0)", "(< ?c0 0)", "T"}
 rule! {minrule246, "(min (select ?x ?y ?z) (select ?x ?w ?u))", "(select ?x (min ?y ?w) (min ?z ?u))"}
-rule! {modrule53, "(% 0 ?x)", "0"}
-rule! {modrule54, "(% ?x ?x)", "0"}
-rule! {modrule58, "(% ?x 1)", "0"}
-conditional_rule! {modrule65, "(% (* ?x ?c0) ?c1)", "(% (* ?x (% ?c0 ?c1)) ?c1)", "(> ?c1 (&& 0 (< (>= ?c0 (|| ?c1 ?c0)) 0)))", "T"}
-conditional_rule! {modrule66, "(% (+ ?x ?c0) ?c1)", "(% (+ ?x (% ?c0 ?c1)) ?c1)", "(> ?c1 (&& 0 (< (>= ?c0 (|| ?c1 ?c0)) 0)))", "T"}
-conditional_rule! {modrule67, "(% (* ?x ?c0) ?c1)", "(* (% ?x (/ ?c1 ?c0)) ?c0)", "(= (> ?c0 (&& 0 (% ?c1 ?c0))) 0)", "T"}
-conditional_rule! {modrule68, "(% (+ (* ?x ?c0) ?y) ?c1)", "(% ?y ?c1)", "(= (% ?c0 ?c1) 0)", "T"}
-conditional_rule! {modrule69, "(% (+ ?y (* ?x ?c0)) ?c1)", "(% ?y ?c1)", "(= (% ?c0 ?c1) 0)", "T"}
-conditional_rule! {modrule70, "(% (- (* ?x ?c0) ?y) ?c1)", "(% (- ?y) ?c1)", "(= (% ?c0 ?c1) 0)", "T"}
-conditional_rule! {modrule71, "(% (- ?y (* ?x ?c0)) ?c1)", "(% ?y ?c1)", "(= (% ?c0 ?c1) 0)", "T"}
-rule! {modrule72, "(% (- ?x ?y) 2)", "(% (+ ?x ?y) 2)"}
+rule! {modrule53, "(mod 0 ?x)", "0"}
+rule! {modrule54, "(mod ?x ?x)", "0"}
+rule! {modrule58, "(mod ?x 1)", "0"}
+conditional_rule! {modrule65, "(mod (* ?x ?c0) ?c1)", "(mod (* ?x (mod ?c0 ?c1)) ?c1)", "(> ?c1 (and 0 (< (>= ?c0 (or ?c1 ?c0)) 0)))", "T"}
+conditional_rule! {modrule66, "(mod (+ ?x ?c0) ?c1)", "(mod (+ ?x (mod ?c0 ?c1)) ?c1)", "(> ?c1 (and 0 (< (>= ?c0 (or ?c1 ?c0)) 0)))", "T"}
+conditional_rule! {modrule67, "(mod (* ?x ?c0) ?c1)", "(* (mod ?x (div ?c1 ?c0)) ?c0)", "(= (> ?c0 (and 0 (mod ?c1 ?c0))) 0)", "T"}
+conditional_rule! {modrule68, "(mod (+ (* ?x ?c0) ?y) ?c1)", "(mod ?y ?c1)", "(= (mod ?c0 ?c1) 0)", "T"}
+conditional_rule! {modrule69, "(mod (+ ?y (* ?x ?c0)) ?c1)", "(mod ?y ?c1)", "(= (mod ?c0 ?c1) 0)", "T"}
+conditional_rule! {modrule70, "(mod (- (* ?x ?c0) ?y) ?c1)", "(mod (- ?y) ?c1)", "(= (mod ?c0 ?c1) 0)", "T"}
+conditional_rule! {modrule71, "(mod (- ?y (* ?x ?c0)) ?c1)", "(mod ?y ?c1)", "(= (mod ?c0 ?c1) 0)", "T"}
+rule! {modrule72, "(mod (- ?x ?y) 2)", "(mod (+ ?x ?y) 2)"}
 rule! {mulrule56, "(* 0 ?x)", "0"}
 rule! {mulrule57, "(* 1 ?x)", "?x"}
 rule! {mulrule58, "(* ?x 0)", "0"}
-conditional_rule! {mulrule64, "(* (- ?x ?y) ?c0)", "(* (- ?y ?x) (- ?c0))", "(> (< ?c0 (&& 0 (- ?c0))) 0)", "T"}
+conditional_rule! {mulrule64, "(* (- ?x ?y) ?c0)", "(* (- ?y ?x) (- ?c0))", "(> (< ?c0 (and 0 (- ?c0))) 0)", "T"}
 rule! {mulrule67, "(* ?x (* ?y ?c0))", "(* (* ?x ?y) ?c0)"}
 rule! {mulrule68, "(* (max ?x ?y) (min ?x ?y))", "(* ?x ?y)"}
 rule! {mulrule69, "(* (max ?x ?y) (min ?y ?x))", "(* ?y ?x)"}
@@ -754,87 +754,87 @@ rule! {notrule14, "(not (>= ?x ?y))", "(> ?y ?x)"}
 rule! {notrule15, "(not (= ?x ?y))", "(!= ?x ?y)"}
 rule! {notrule16, "(not (!= ?x ?y))", "(= ?x ?y)"}
 rule! {notrule17, "(not (not ?x))", "?x"}
-rule! {orrule21, "(|| ?x T)", "T"}
-rule! {orrule22, "(|| ?x F)", "?x"}
-rule! {orrule23, "(|| ?x ?x)", "?x"}
-rule! {orrule25, "(|| (|| ?x ?y) ?x)", "(|| ?x ?y)"}
-rule! {orrule26, "(|| ?x (|| ?x ?y))", "(|| ?x ?y)"}
-rule! {orrule27, "(|| (|| ?x ?y) ?y)", "(|| ?x ?y)"}
-rule! {orrule28, "(|| ?y (|| ?x ?y))", "(|| ?x ?y)"}
-rule! {orrule30, "(|| (|| (|| ?x ?y) ?z) ?x)", "(|| (|| ?x ?y) ?z)"}
-rule! {orrule31, "(|| ?x (|| (|| ?x ?y) ?z))", "(|| (|| ?x ?y) ?z)"}
-rule! {orrule32, "(|| (|| ?z (|| ?x ?y)) ?x)", "(|| ?z (|| ?x ?y))"}
-rule! {orrule33, "(|| ?x (|| ?z (|| ?x ?y)))", "(|| ?z (|| ?x ?y))"}
-rule! {orrule34, "(|| (|| (|| ?x ?y) ?z) ?y)", "(|| (|| ?x ?y) ?z)"}
-rule! {orrule35, "(|| ?y (|| (|| ?x ?y) ?z))", "(|| (|| ?x ?y) ?z)"}
-rule! {orrule36, "(|| (|| ?z (|| ?x ?y)) ?y)", "(|| ?z (|| ?x ?y))"}
-rule! {orrule37, "(|| ?y (|| ?z (|| ?x ?y)))", "(|| ?z (|| ?x ?y))"}
-rule! {orrule39, "(|| (&& ?x ?y) ?x)", "?x"}
-rule! {orrule40, "(|| ?x (&& ?x ?y))", "?x"}
-rule! {orrule41, "(|| (&& ?x ?y) ?y)", "?y"}
-rule! {orrule42, "(|| ?y (&& ?x ?y))", "?y"}
-rule! {orrule44, "(|| (|| (|| ?x ?y) ?z) ?x)", "(|| (|| ?x ?y) ?z)"}
-rule! {orrule45, "(|| ?x (|| (|| ?x ?y) ?z))", "(|| (|| ?x ?y) ?z)"}
-rule! {orrule46, "(|| (|| ?z (|| ?x ?y)) ?x)", "(|| ?z (|| ?x ?y))"}
-rule! {orrule47, "(|| ?x (|| ?z (|| ?x ?y)))", "(|| ?z (|| ?x ?y))"}
-rule! {orrule48, "(|| (|| (|| ?x ?y) ?z) ?y)", "(|| (|| ?x ?y) ?z)"}
-rule! {orrule49, "(|| ?y (|| (|| ?x ?y) ?z))", "(|| (|| ?x ?y) ?z)"}
-rule! {orrule50, "(|| (|| ?z (|| ?x ?y)) ?y)", "(|| ?z (|| ?x ?y))"}
-rule! {orrule51, "(|| ?y (|| ?z (|| ?x ?y)))", "(|| ?z (|| ?x ?y))"}
-rule! {orrule53, "(!= ?x (= (|| ?y ?x) ?y))", "T"}
-rule! {orrule54, "(!= ?x (= (|| ?y ?y) ?x))", "T"}
-rule! {orrule55, "(= (|| (!= (|| ?z ?x) ?y) ?x) ?y)", "T"}
-rule! {orrule56, "(= (|| (!= (|| ?z ?x) ?y) ?y) ?x)", "T"}
-rule! {orrule57, "(= (|| (!= ?x (|| ?y ?z)) ?x) ?y)", "T"}
-rule! {orrule58, "(= (|| (!= ?x (|| ?y ?z)) ?y) ?x)", "T"}
-rule! {orrule59, "(!= (|| (= (|| ?z ?x) ?y) ?x) ?y)", "T"}
-rule! {orrule60, "(!= (|| (= (|| ?z ?x) ?y) ?y) ?x)", "T"}
-rule! {orrule61, "(!= (|| (= ?x (|| ?y ?z)) ?x) ?y)", "T"}
-rule! {orrule62, "(!= (|| (= ?x (|| ?y ?z)) ?y) ?x)", "T"}
-rule! {orrule63, "(|| ?x (not ?x))", "T"}
-rule! {orrule64, "(|| (not ?x) ?x)", "T"}
-rule! {orrule65, "(< (<= ?y (|| ?x ?x)) ?y)", "T"}
-conditional_rule! {orrule69, "(< (<= ?x (|| ?c0 ?c1)) ?x)", "T", "(<= ?c1 ?c0)", "T"}
-conditional_rule! {orrule70, "(< (<= ?c1 (|| ?x ?x)) ?c0)", "T", "(<= ?c1 ?c0)", "T"}
-conditional_rule! {orrule71, "(< (< ?x (|| ?c0 ?c1)) ?x)", "T", "(< ?c1 ?c0)", "T"}
-conditional_rule! {orrule72, "(< (< ?c1 (|| ?x ?x)) ?c0)", "T", "(< ?c1 ?c0)", "T"}
-rule! {orrule73, "(< (< ?c0 (|| ?x ?c1)) ?x)", "(< (min ?c0 ?c1) ?x)"}
-rule! {orrule74, "(<= (<= ?c0 (|| ?x ?c1)) ?x)", "(<= (min ?c0 ?c1) ?x)"}
-rule! {orrule75, "(< (< ?x (|| ?c0 ?x)) ?c1)", "(< ?x (max ?c0 ?c1))"}
-rule! {orrule76, "(<= (<= ?x (|| ?c0 ?x)) ?c1)", "(<= ?x (max ?c0 ?c1))"}
-rule! {orrule82, "(|| (&& ?x (|| ?y ?z)) ?y)", "(|| (&& ?x ?z) ?y)"}
-rule! {orrule83, "(|| (&& ?x (|| ?z ?y)) ?y)", "(|| (&& ?x ?z) ?y)"}
-rule! {orrule84, "(|| ?y (&& ?x (|| ?y ?z)))", "(|| ?y (&& ?x ?z))"}
-rule! {orrule85, "(|| ?y (&& ?x (|| ?z ?y)))", "(|| ?y (&& ?x ?z))"}
-rule! {orrule87, "(|| (&& (|| ?y ?z) ?x) ?y)", "(|| (&& ?z ?x) ?y)"}
-rule! {orrule88, "(|| (&& (|| ?z ?y) ?x) ?y)", "(|| (&& ?z ?x) ?y)"}
-rule! {orrule89, "(|| ?y (&& (|| ?y ?z) ?x))", "(|| ?y (&& ?z ?x))"}
-rule! {orrule90, "(|| ?y (&& (|| ?z ?y) ?x))", "(|| ?y (&& ?z ?x))"}
-rule! {orrule92, "(|| (|| ?x (&& ?y ?z)) ?y)", "(|| ?x ?y)"}
-rule! {orrule93, "(|| (|| ?x (&& ?z ?y)) ?y)", "(|| ?x ?y)"}
-rule! {orrule94, "(|| ?y (|| ?x (&& ?y ?z)))", "(|| ?y ?x)"}
-rule! {orrule95, "(|| ?y (|| ?x (&& ?z ?y)))", "(|| ?y ?x)"}
-rule! {orrule97, "(|| (|| (&& ?y ?z) ?x) ?y)", "(|| ?x ?y)"}
-rule! {orrule98, "(|| (|| (&& ?z ?y) ?x) ?y)", "(|| ?x ?y)"}
-rule! {orrule99, "(|| ?y (|| (&& ?y ?z) ?x))", "(|| ?y ?x)"}
-rule! {orrule100, "(|| ?y (|| (&& ?z ?y) ?x))", "(|| ?y ?x)"}
-rule! {orrule102, "(|| (&& ?x ?y) (&& ?x ?z))", "(&& ?x (|| ?y ?z))"}
-rule! {orrule103, "(|| (&& ?x ?y) (&& ?z ?x))", "(&& ?x (|| ?y ?z))"}
-rule! {orrule104, "(|| (&& ?y ?x) (&& ?x ?z))", "(&& ?x (|| ?y ?z))"}
-rule! {orrule105, "(|| (&& ?y ?x) (&& ?z ?x))", "(&& ?x (|| ?y ?z))"}
-rule! {orrule107, "(< (< ?x (|| ?y ?x)) ?z)", "(< ?x (max ?y ?z))"}
-rule! {orrule108, "(< (< ?y (|| ?x ?z)) ?x)", "(< (min ?y ?z) ?x)"}
-rule! {orrule109, "(<= (<= ?x (|| ?y ?x)) ?z)", "(<= ?x (max ?y ?z))"}
-rule! {orrule110, "(<= (<= ?y (|| ?x ?z)) ?x)", "(<= (min ?y ?z) ?x)"}
+rule! {orrule21, "(or ?x T)", "T"}
+rule! {orrule22, "(or ?x F)", "?x"}
+rule! {orrule23, "(or ?x ?x)", "?x"}
+rule! {orrule25, "(or (or ?x ?y) ?x)", "(or ?x ?y)"}
+rule! {orrule26, "(or ?x (or ?x ?y))", "(or ?x ?y)"}
+rule! {orrule27, "(or (or ?x ?y) ?y)", "(or ?x ?y)"}
+rule! {orrule28, "(or ?y (or ?x ?y))", "(or ?x ?y)"}
+rule! {orrule30, "(or (or (or ?x ?y) ?z) ?x)", "(or (or ?x ?y) ?z)"}
+rule! {orrule31, "(or ?x (or (or ?x ?y) ?z))", "(or (or ?x ?y) ?z)"}
+rule! {orrule32, "(or (or ?z (or ?x ?y)) ?x)", "(or ?z (or ?x ?y))"}
+rule! {orrule33, "(or ?x (or ?z (or ?x ?y)))", "(or ?z (or ?x ?y))"}
+rule! {orrule34, "(or (or (or ?x ?y) ?z) ?y)", "(or (or ?x ?y) ?z)"}
+rule! {orrule35, "(or ?y (or (or ?x ?y) ?z))", "(or (or ?x ?y) ?z)"}
+rule! {orrule36, "(or (or ?z (or ?x ?y)) ?y)", "(or ?z (or ?x ?y))"}
+rule! {orrule37, "(or ?y (or ?z (or ?x ?y)))", "(or ?z (or ?x ?y))"}
+rule! {orrule39, "(or (and ?x ?y) ?x)", "?x"}
+rule! {orrule40, "(or ?x (and ?x ?y))", "?x"}
+rule! {orrule41, "(or (and ?x ?y) ?y)", "?y"}
+rule! {orrule42, "(or ?y (and ?x ?y))", "?y"}
+rule! {orrule44, "(or (or (or ?x ?y) ?z) ?x)", "(or (or ?x ?y) ?z)"}
+rule! {orrule45, "(or ?x (or (or ?x ?y) ?z))", "(or (or ?x ?y) ?z)"}
+rule! {orrule46, "(or (or ?z (or ?x ?y)) ?x)", "(or ?z (or ?x ?y))"}
+rule! {orrule47, "(or ?x (or ?z (or ?x ?y)))", "(or ?z (or ?x ?y))"}
+rule! {orrule48, "(or (or (or ?x ?y) ?z) ?y)", "(or (or ?x ?y) ?z)"}
+rule! {orrule49, "(or ?y (or (or ?x ?y) ?z))", "(or (or ?x ?y) ?z)"}
+rule! {orrule50, "(or (or ?z (or ?x ?y)) ?y)", "(or ?z (or ?x ?y))"}
+rule! {orrule51, "(or ?y (or ?z (or ?x ?y)))", "(or ?z (or ?x ?y))"}
+rule! {orrule53, "(!= ?x (= (or ?y ?x) ?y))", "T"}
+rule! {orrule54, "(!= ?x (= (or ?y ?y) ?x))", "T"}
+rule! {orrule55, "(= (or (!= (or ?z ?x) ?y) ?x) ?y)", "T"}
+rule! {orrule56, "(= (or (!= (or ?z ?x) ?y) ?y) ?x)", "T"}
+rule! {orrule57, "(= (or (!= ?x (or ?y ?z)) ?x) ?y)", "T"}
+rule! {orrule58, "(= (or (!= ?x (or ?y ?z)) ?y) ?x)", "T"}
+rule! {orrule59, "(!= (or (= (or ?z ?x) ?y) ?x) ?y)", "T"}
+rule! {orrule60, "(!= (or (= (or ?z ?x) ?y) ?y) ?x)", "T"}
+rule! {orrule61, "(!= (or (= ?x (or ?y ?z)) ?x) ?y)", "T"}
+rule! {orrule62, "(!= (or (= ?x (or ?y ?z)) ?y) ?x)", "T"}
+rule! {orrule63, "(or ?x (not ?x))", "T"}
+rule! {orrule64, "(or (not ?x) ?x)", "T"}
+rule! {orrule65, "(< (<= ?y (or ?x ?x)) ?y)", "T"}
+conditional_rule! {orrule69, "(< (<= ?x (or ?c0 ?c1)) ?x)", "T", "(<= ?c1 ?c0)", "T"}
+conditional_rule! {orrule70, "(< (<= ?c1 (or ?x ?x)) ?c0)", "T", "(<= ?c1 ?c0)", "T"}
+conditional_rule! {orrule71, "(< (< ?x (or ?c0 ?c1)) ?x)", "T", "(< ?c1 ?c0)", "T"}
+conditional_rule! {orrule72, "(< (< ?c1 (or ?x ?x)) ?c0)", "T", "(< ?c1 ?c0)", "T"}
+rule! {orrule73, "(< (< ?c0 (or ?x ?c1)) ?x)", "(< (min ?c0 ?c1) ?x)"}
+rule! {orrule74, "(<= (<= ?c0 (or ?x ?c1)) ?x)", "(<= (min ?c0 ?c1) ?x)"}
+rule! {orrule75, "(< (< ?x (or ?c0 ?x)) ?c1)", "(< ?x (max ?c0 ?c1))"}
+rule! {orrule76, "(<= (<= ?x (or ?c0 ?x)) ?c1)", "(<= ?x (max ?c0 ?c1))"}
+rule! {orrule82, "(or (and ?x (or ?y ?z)) ?y)", "(or (and ?x ?z) ?y)"}
+rule! {orrule83, "(or (and ?x (or ?z ?y)) ?y)", "(or (and ?x ?z) ?y)"}
+rule! {orrule84, "(or ?y (and ?x (or ?y ?z)))", "(or ?y (and ?x ?z))"}
+rule! {orrule85, "(or ?y (and ?x (or ?z ?y)))", "(or ?y (and ?x ?z))"}
+rule! {orrule87, "(or (and (or ?y ?z) ?x) ?y)", "(or (and ?z ?x) ?y)"}
+rule! {orrule88, "(or (and (or ?z ?y) ?x) ?y)", "(or (and ?z ?x) ?y)"}
+rule! {orrule89, "(or ?y (and (or ?y ?z) ?x))", "(or ?y (and ?z ?x))"}
+rule! {orrule90, "(or ?y (and (or ?z ?y) ?x))", "(or ?y (and ?z ?x))"}
+rule! {orrule92, "(or (or ?x (and ?y ?z)) ?y)", "(or ?x ?y)"}
+rule! {orrule93, "(or (or ?x (and ?z ?y)) ?y)", "(or ?x ?y)"}
+rule! {orrule94, "(or ?y (or ?x (and ?y ?z)))", "(or ?y ?x)"}
+rule! {orrule95, "(or ?y (or ?x (and ?z ?y)))", "(or ?y ?x)"}
+rule! {orrule97, "(or (or (and ?y ?z) ?x) ?y)", "(or ?x ?y)"}
+rule! {orrule98, "(or (or (and ?z ?y) ?x) ?y)", "(or ?x ?y)"}
+rule! {orrule99, "(or ?y (or (and ?y ?z) ?x))", "(or ?y ?x)"}
+rule! {orrule100, "(or ?y (or (and ?z ?y) ?x))", "(or ?y ?x)"}
+rule! {orrule102, "(or (and ?x ?y) (and ?x ?z))", "(and ?x (or ?y ?z))"}
+rule! {orrule103, "(or (and ?x ?y) (and ?z ?x))", "(and ?x (or ?y ?z))"}
+rule! {orrule104, "(or (and ?y ?x) (and ?x ?z))", "(and ?x (or ?y ?z))"}
+rule! {orrule105, "(or (and ?y ?x) (and ?z ?x))", "(and ?x (or ?y ?z))"}
+rule! {orrule107, "(< (< ?x (or ?y ?x)) ?z)", "(< ?x (max ?y ?z))"}
+rule! {orrule108, "(< (< ?y (or ?x ?z)) ?x)", "(< (min ?y ?z) ?x)"}
+rule! {orrule109, "(<= (<= ?x (or ?y ?x)) ?z)", "(<= ?x (max ?y ?z))"}
+rule! {orrule110, "(<= (<= ?y (or ?x ?z)) ?x)", "(<= (min ?y ?z) ?x)"}
 rule! {selectrule29, "(select 1 ?x ?y)", "?x"}
 rule! {selectrule30, "(select 0 ?x ?y)", "?y"}
 rule! {selectrule31, "(select ?x ?y ?y)", "?y"}
 rule! {selectrule58, "(select (!= ?x ?y) ?z ?w)", "(select (= ?x ?y) ?w ?z)"}
 rule! {selectrule59, "(select (<= ?x ?y) ?z ?w)", "(select (< ?y ?x) ?w ?z)"}
-rule! {selectrule60, "(select ?x (select ?y ?z ?w) ?z)", "(select (&& ?x (not ?y)) ?w ?z)"}
-rule! {selectrule61, "(select ?x (select ?y ?z ?w) ?w)", "(select (&& ?x ?y) ?z ?w)"}
-rule! {selectrule62, "(select ?x ?y (select ?z ?y ?w))", "(select (|| ?x ?z) ?y ?w)"}
-rule! {selectrule63, "(select ?x ?y (select ?z ?w ?y))", "(select (|| ?x (not ?z)) ?y ?w)"}
+rule! {selectrule60, "(select ?x (select ?y ?z ?w) ?z)", "(select (and ?x (not ?y)) ?w ?z)"}
+rule! {selectrule61, "(select ?x (select ?y ?z ?w) ?w)", "(select (and ?x ?y) ?z ?w)"}
+rule! {selectrule62, "(select ?x ?y (select ?z ?y ?w))", "(select (or ?x ?z) ?y ?w)"}
+rule! {selectrule63, "(select ?x ?y (select ?z ?w ?y))", "(select (or ?x (not ?z)) ?y ?w)"}
 rule! {selectrule64, "(select ?x (select ?x ?y ?z) ?w)", "(select ?x ?y ?w)"}
 rule! {selectrule65, "(select ?x ?y (select ?x ?z ?w))", "(select ?x ?y ?w)"}
 rule! {selectrule66, "(select ?x (+ ?y ?z) (+ ?y ?w))", "(+ ?y (select ?x ?z ?w))"}
@@ -851,23 +851,23 @@ rule! {selectrule76, "(select ?x (* ?y ?z) (* ?y ?w))", "(* ?y (select ?x ?z ?w)
 rule! {selectrule77, "(select ?x (* ?y ?z) (* ?w ?y))", "(* ?y (select ?x ?z ?w))"}
 rule! {selectrule78, "(select ?x (* ?z ?y) (* ?y ?w))", "(* ?y (select ?x ?z ?w))"}
 rule! {selectrule79, "(select ?x (* ?z ?y) (* ?w ?y))", "(* (select ?x ?z ?w) ?y)"}
-rule! {selectrule80, "(select ?x (/ ?z ?y) (/ ?w ?y))", "(/ (select ?x ?z ?w) ?y)"}
-rule! {selectrule81, "(select ?x (% ?z ?y) (% ?w ?y))", "(% (select ?x ?z ?w) ?y)"}
+rule! {selectrule80, "(select ?x (div ?z ?y) (div ?w ?y))", "(div (select ?x ?z ?w) ?y)"}
+rule! {selectrule81, "(select ?x (mod ?z ?y) (mod ?w ?y))", "(mod (select ?x ?z ?w) ?y)"}
 rule! {selectrule83, "(select (< ?x ?y) ?x ?y)", "(min ?x ?y)"}
 rule! {selectrule84, "(select (< ?x ?y) ?y ?x)", "(max ?x ?y)"}
-conditional_rule! {selectrule87, "(select ?x (* ?y ?c0) ?c1)", "(* (select ?x ?y (/ ?c1 ?c0)) ?c0)", "(= (% ?c1 ?c0) 0)", "T"}
-conditional_rule! {selectrule88, "(select ?x ?c0 (* ?y ?c1))", "(* (select ?x (/ ?c0 ?c1) ?y) ?c1)", "(= (% ?c0 ?c1) 0)", "T"}
-conditional_rule! {selectrule91, "(select (< ?c0 ?x) (+ ?x ?c1) ?c2)", "(max (+ ?x ?c1) ?c2)", "(= ?c2 (= (|| (+ ?c0 ?c1) ?c2) (+ (+ ?c0 ?c1) 1)))", "T"}
-conditional_rule! {selectrule92, "(select (< ?x ?c0) ?c1 (+ ?x ?c2))", "(max (+ ?x ?c2) ?c1)", "(= ?c1 (= (|| (+ ?c0 ?c2) (+ ?c1 1)) (+ ?c0 ?c2)))", "T"}
-conditional_rule! {selectrule93, "(select (< ?c0 ?x) ?c1 (+ ?x ?c2))", "(min (+ ?x ?c2) ?c1)", "(= ?c1 (= (|| (+ ?c0 ?c2) ?c1) (+ (+ ?c0 ?c2) 1)))", "T"}
-conditional_rule! {selectrule94, "(select (< ?x ?c0) (+ ?x ?c1) ?c2)", "(min (+ ?x ?c1) ?c2)", "(= ?c2 (= (|| (+ ?c0 ?c1) (+ ?c2 1)) (+ ?c0 ?c1)))", "T"}
+conditional_rule! {selectrule87, "(select ?x (* ?y ?c0) ?c1)", "(* (select ?x ?y (div ?c1 ?c0)) ?c0)", "(= (mod ?c1 ?c0) 0)", "T"}
+conditional_rule! {selectrule88, "(select ?x ?c0 (* ?y ?c1))", "(* (select ?x (div ?c0 ?c1) ?y) ?c1)", "(= (mod ?c0 ?c1) 0)", "T"}
+conditional_rule! {selectrule91, "(select (< ?c0 ?x) (+ ?x ?c1) ?c2)", "(max (+ ?x ?c1) ?c2)", "(= ?c2 (= (or (+ ?c0 ?c1) ?c2) (+ (+ ?c0 ?c1) 1)))", "T"}
+conditional_rule! {selectrule92, "(select (< ?x ?c0) ?c1 (+ ?x ?c2))", "(max (+ ?x ?c2) ?c1)", "(= ?c1 (= (or (+ ?c0 ?c2) (+ ?c1 1)) (+ ?c0 ?c2)))", "T"}
+conditional_rule! {selectrule93, "(select (< ?c0 ?x) ?c1 (+ ?x ?c2))", "(min (+ ?x ?c2) ?c1)", "(= ?c1 (= (or (+ ?c0 ?c2) ?c1) (+ (+ ?c0 ?c2) 1)))", "T"}
+conditional_rule! {selectrule94, "(select (< ?x ?c0) (+ ?x ?c1) ?c2)", "(min (+ ?x ?c1) ?c2)", "(= ?c2 (= (or (+ ?c0 ?c1) (+ ?c2 1)) (+ ?c0 ?c1)))", "T"}
 conditional_rule! {selectrule96, "(select (< ?c0 ?x) ?x ?c1)", "(max ?x ?c1)", "(= ?c1 (+ ?c0 1))", "T"}
 conditional_rule! {selectrule97, "(select (< ?x ?c0) ?c1 ?x)", "(max ?x ?c1)", "(= (+ ?c1 1) ?c0)", "T"}
 conditional_rule! {selectrule98, "(select (< ?c0 ?x) ?c1 ?x)", "(min ?x ?c1)", "(= ?c1 (+ ?c0 1))", "T"}
-rule! {selectrule104, "(select ?x ?y F)", "(&& ?x ?y)"}
-rule! {selectrule105, "(select ?x ?y T)", "(|| (not ?x) ?y)"}
-rule! {selectrule106, "(select ?x F ?y)", "(&& (not ?x) ?y)"}
-rule! {selectrule107, "(select ?x T ?y)", "(|| ?x ?y)"}
+rule! {selectrule104, "(select ?x ?y F)", "(and ?x ?y)"}
+rule! {selectrule105, "(select ?x ?y T)", "(or (not ?x) ?y)"}
+rule! {selectrule106, "(select ?x F ?y)", "(and (not ?x) ?y)"}
+rule! {selectrule107, "(select ?x T ?y)", "(or ?x ?y)"}
 rule! {subrule36, "(- ?x 0)", "?x"}
 rule! {subrule47, "(- (select ?x ?y ?z) (select ?x ?w ?u))", "(select ?x (- ?y ?w) (- ?z ?u))"}
 rule! {subrule48, "(- (select ?x ?y ?z) ?y)", "(select ?x 0 (- ?z ?y))"}
@@ -892,7 +892,7 @@ rule! {subrule66, "(- (+ ?x ?c0) ?y)", "(+ (- ?x ?y) ?c0)"}
 rule! {subrule67, "(- (- ?c0 ?x) (- ?c1 ?y))", "(+ (- ?y ?x) (- ?c0 ?c1))"}
 rule! {subrule68, "(- (- ?c0 ?x) (+ ?y ?c1))", "(- (- ?c0 ?c1) (+ ?x ?y))"}
 rule! {subrule69, "(- ?x (- ?y ?z))", "(+ ?x (- ?z ?y))"}
-conditional_rule! {subrule70, "(- ?x (* ?y ?c0))", "(+ ?x (* ?y (- ?c0)))", "(> (< ?c0 (&& 0 (- ?c0))) 0)", "T"}
+conditional_rule! {subrule70, "(- ?x (* ?y ?c0))", "(+ ?x (* ?y (- ?c0)))", "(> (< ?c0 (and 0 (- ?c0))) 0)", "T"}
 rule! {subrule71, "(- ?x (+ ?y ?c0))", "(- (- ?x ?y) ?c0)"}
 rule! {subrule72, "(- (- ?c0 ?x) ?c1)", "(- (- ?c0 ?c1) ?x)"}
 rule! {subrule73, "(- (* ?x ?y) (* ?z ?y))", "(* (- ?x ?z) ?y)"}
@@ -933,32 +933,32 @@ rule! {subrule115, "(- (max (+ ?y ?x) ?z) ?x)", "(max ?y (- ?z ?x))"}
 rule! {subrule116, "(- (max ?z (+ ?x ?y)) ?x)", "(max (- ?z ?x) ?y)"}
 rule! {subrule117, "(- (max ?z (+ ?y ?x)) ?x)", "(max (- ?z ?x) ?y)"}
 rule! {subrule118, "(- (max ?x ?y) (max ?y ?x))", "0"}
-conditional_rule! {subrule225, "(- ?c0 (/ (- ?c1 ?x) ?c2))", "(/ (+ (- (+ (- (* ?c0 ?c2) ?c1) ?c2) 1) ?x) ?c2)", "(> ?c2 0)", "T"}
-conditional_rule! {subrule226, "(- ?c0 (/ (+ ?x ?c1) ?c2))", "(/ (- (- (+ (- (* ?c0 ?c2) ?c1) ?c2) 1) ?x) ?c2)", "(> ?c2 0)", "T"}
-conditional_rule! {subrule227, "(- ?x (/ (+ ?x ?y) ?c0))", "(/ (+ (- (* ?x (- ?c0 1)) ?y) (- ?c0 1)) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule228, "(- ?x (/ (- ?x ?y) ?c0))", "(/ (+ (+ (* ?x (- ?c0 1)) ?y) (- ?c0 1)) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule229, "(- ?x (/ (+ ?y ?x) ?c0))", "(/ (+ (- (* ?x (- ?c0 1)) ?y) (- ?c0 1)) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule230, "(- ?x (/ (- ?y ?x) ?c0))", "(/ (+ (- (* ?x (+ ?c0 1)) ?y) (- ?c0 1)) ?c0)", "(> ?c0 0)", "T"}
-rule! {subrule231, "(- (/ (+ ?x ?y) ?c0) ?x)", "(/ (+ (* ?x (- 1 ?c0)) ?y) ?c0)"}
-rule! {subrule232, "(- (/ (+ ?y ?x) ?c0) ?x)", "(/ (+ ?y (* ?x (- 1 ?c0))) ?c0)"}
-rule! {subrule233, "(- (/ (- ?x ?y) ?c0) ?x)", "(/ (- (* ?x (- 1 ?c0)) ?y) ?c0)"}
-rule! {subrule234, "(- (/ (- ?y ?x) ?c0) ?x)", "(/ (- ?y (* ?x (+ 1 ?c0))) ?c0)"}
-conditional_rule! {subrule236, "(- (* (/ ?x ?c0) ?c0) ?x)", "(- (% ?x ?c0))", "(> ?c0 0)", "T"}
-conditional_rule! {subrule237, "(- ?x (* (/ ?x ?c0) ?c0))", "(% ?x ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule238, "(- (* (/ (+ ?x ?c0) ?c1) ?c1) ?x)", "(% (- ?x) ?c1)", "(= (> ?c1 (&& 0 (+ ?c0 1))) ?c1)", "T"}
-conditional_rule! {subrule239, "(- ?x (* (/ (+ ?x ?c0) ?c1) ?c1))", "(+ (% (+ ?x ?c0) ?c1) (- ?c0))", "(= (> ?c1 (&& 0 (+ ?c0 1))) ?c1)", "T"}
-conditional_rule! {subrule240, "(- (* ?x ?c0) (* ?y ?c1))", "(* (- (* ?x (/ ?c0 ?c1)) ?y) ?c1)", "(= (% ?c0 ?c1) 0)", "T"}
-conditional_rule! {subrule241, "(- (* ?x ?c0) (* ?y ?c1))", "(* (- ?x (* ?y (/ ?c1 ?c0))) ?c0)", "(= (% ?c1 ?c0) 0)", "T"}
-conditional_rule! {subrule246, "(- (/ (+ (+ ?x ?y) ?z) ?c0) (/ (+ (+ ?y ?x) ?w) ?c0))", "(- (/ (+ (+ ?x ?y) ?z) ?c0) (/ (+ (+ ?x ?y) ?w) ?c0))", "(> ?c0 0)", "T"}
-conditional_rule! {subrule247, "(- (/ (+ ?x ?y) ?c0) (/ (+ ?y ?x) ?c0))", "0", "(!= ?c0 0)", "T"}
-conditional_rule! {subrule248, "(- (/ (+ ?x ?y) ?c0) (/ (+ ?x ?c1) ?c0))", "(/ (+ (% (+ ?x (% ?c1 ?c0)) ?c0) (- ?y ?c1)) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule249, "(- (/ (+ ?x ?c1) ?c0) (/ (+ ?x ?y) ?c0))", "(/ (- (- (- (+ ?c0 ?c1) 1) ?y) (% (+ ?x (% ?c1 ?c0)) ?c0)) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule250, "(- (/ (- ?x ?y) ?c0) (/ (+ ?x ?c1) ?c0))", "(/ (- (- (% (+ ?x (% ?c1 ?c0)) ?c0) ?y) ?c1) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule251, "(- (/ (+ ?x ?c1) ?c0) (/ (- ?x ?y) ?c0))", "(/ (- (+ ?y (- (+ ?c0 ?c1) 1)) (% (+ ?x (% ?c1 ?c0)) ?c0)) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule252, "(- (/ ?x ?c0) (/ (+ ?x ?y) ?c0))", "(/ (- (- (- ?c0 1) ?y) (% ?x ?c0)) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule253, "(- (/ (+ ?x ?y) ?c0) (/ ?x ?c0))", "(/ (+ (% ?x ?c0) ?y) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule254, "(- (/ ?x ?c0) (/ (- ?x ?y) ?c0))", "(/ (- (+ ?y (- ?c0 1)) (% ?x ?c0)) ?c0)", "(> ?c0 0)", "T"}
-conditional_rule! {subrule255, "(- (/ (- ?x ?y) ?c0) (/ ?x ?c0))", "(/ (- (% ?x ?c0) ?y) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule225, "(- ?c0 (div (- ?c1 ?x) ?c2))", "(div (+ (- (+ (- (* ?c0 ?c2) ?c1) ?c2) 1) ?x) ?c2)", "(> ?c2 0)", "T"}
+conditional_rule! {subrule226, "(- ?c0 (div (+ ?x ?c1) ?c2))", "(div (- (- (+ (- (* ?c0 ?c2) ?c1) ?c2) 1) ?x) ?c2)", "(> ?c2 0)", "T"}
+conditional_rule! {subrule227, "(- ?x (div (+ ?x ?y) ?c0))", "(div (+ (- (* ?x (- ?c0 1)) ?y) (- ?c0 1)) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule228, "(- ?x (div (- ?x ?y) ?c0))", "(div (+ (+ (* ?x (- ?c0 1)) ?y) (- ?c0 1)) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule229, "(- ?x (div (+ ?y ?x) ?c0))", "(div (+ (- (* ?x (- ?c0 1)) ?y) (- ?c0 1)) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule230, "(- ?x (div (- ?y ?x) ?c0))", "(div (+ (- (* ?x (+ ?c0 1)) ?y) (- ?c0 1)) ?c0)", "(> ?c0 0)", "T"}
+rule! {subrule231, "(- (div (+ ?x ?y) ?c0) ?x)", "(div (+ (* ?x (- 1 ?c0)) ?y) ?c0)"}
+rule! {subrule232, "(- (div (+ ?y ?x) ?c0) ?x)", "(div (+ ?y (* ?x (- 1 ?c0))) ?c0)"}
+rule! {subrule233, "(- (div (- ?x ?y) ?c0) ?x)", "(div (- (* ?x (- 1 ?c0)) ?y) ?c0)"}
+rule! {subrule234, "(- (div (- ?y ?x) ?c0) ?x)", "(div (- ?y (* ?x (+ 1 ?c0))) ?c0)"}
+conditional_rule! {subrule236, "(- (* (div ?x ?c0) ?c0) ?x)", "(- (mod ?x ?c0))", "(> ?c0 0)", "T"}
+conditional_rule! {subrule237, "(- ?x (* (div ?x ?c0) ?c0))", "(mod ?x ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule238, "(- (* (div (+ ?x ?c0) ?c1) ?c1) ?x)", "(mod (- ?x) ?c1)", "(= (> ?c1 (and 0 (+ ?c0 1))) ?c1)", "T"}
+conditional_rule! {subrule239, "(- ?x (* (div (+ ?x ?c0) ?c1) ?c1))", "(+ (mod (+ ?x ?c0) ?c1) (- ?c0))", "(= (> ?c1 (and 0 (+ ?c0 1))) ?c1)", "T"}
+conditional_rule! {subrule240, "(- (* ?x ?c0) (* ?y ?c1))", "(* (- (* ?x (div ?c0 ?c1)) ?y) ?c1)", "(= (mod ?c0 ?c1) 0)", "T"}
+conditional_rule! {subrule241, "(- (* ?x ?c0) (* ?y ?c1))", "(* (- ?x (* ?y (div ?c1 ?c0))) ?c0)", "(= (mod ?c1 ?c0) 0)", "T"}
+conditional_rule! {subrule246, "(- (div (+ (+ ?x ?y) ?z) ?c0) (div (+ (+ ?y ?x) ?w) ?c0))", "(- (div (+ (+ ?x ?y) ?z) ?c0) (div (+ (+ ?x ?y) ?w) ?c0))", "(> ?c0 0)", "T"}
+conditional_rule! {subrule247, "(- (div (+ ?x ?y) ?c0) (div (+ ?y ?x) ?c0))", "0", "(!= ?c0 0)", "T"}
+conditional_rule! {subrule248, "(- (div (+ ?x ?y) ?c0) (div (+ ?x ?c1) ?c0))", "(div (+ (mod (+ ?x (mod ?c1 ?c0)) ?c0) (- ?y ?c1)) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule249, "(- (div (+ ?x ?c1) ?c0) (div (+ ?x ?y) ?c0))", "(div (- (- (- (+ ?c0 ?c1) 1) ?y) (mod (+ ?x (mod ?c1 ?c0)) ?c0)) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule250, "(- (div (- ?x ?y) ?c0) (div (+ ?x ?c1) ?c0))", "(div (- (- (mod (+ ?x (mod ?c1 ?c0)) ?c0) ?y) ?c1) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule251, "(- (div (+ ?x ?c1) ?c0) (div (- ?x ?y) ?c0))", "(div (- (+ ?y (- (+ ?c0 ?c1) 1)) (mod (+ ?x (mod ?c1 ?c0)) ?c0)) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule252, "(- (div ?x ?c0) (div (+ ?x ?y) ?c0))", "(div (- (- (- ?c0 1) ?y) (mod ?x ?c0)) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule253, "(- (div (+ ?x ?y) ?c0) (div ?x ?c0))", "(div (+ (mod ?x ?c0) ?y) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule254, "(- (div ?x ?c0) (div (- ?x ?y) ?c0))", "(div (- (+ ?y (- ?c0 1)) (mod ?x ?c0)) ?c0)", "(> ?c0 0)", "T"}
+conditional_rule! {subrule255, "(- (div (- ?x ?y) ?c0) (div ?x ?c0))", "(div (- (mod ?x ?c0) ?y) ?c0)", "(> ?c0 0)", "T"}
 
 
 #[test]
@@ -1825,9 +1825,9 @@ let condrules = vec![
   subrule255(),
 ];
 
-//(<= (+ (min (* (- v4 v3) c0) c1) (* v3 c0)) (min (* v4 c0) (+ (* v3 c0) c1)))
+// ((((((((((v1 - v2) + 7)div4)*4) + v2) - v1) + 3)div4) - (((v2 - v1)div4) + (((v1 - v2) + 7)div4))) <= 1) "
 
-  let start = "(<= (+ (min (* (- v4 v3) c0) c1) (* v3 c0)) (min (* v4 c0) (+ (* v3 c0) c1)))";
+  let start = "(<= (- (div (+ (- (+ (* (div (+ (- v1 v2) c0) c1) c1) v2) v1) c2) c1) (+ (div (- v2 v1) c1) (div (+ (- v1 v2) c0) c1))) c3)";
   let goal = "T";
   let start_expr = HalideExpr.parse_expr(start).unwrap();
   let goal_expr = HalideExpr.parse_expr(goal).unwrap();
@@ -1836,6 +1836,746 @@ let condrules = vec![
   let mut egraph_size = egraph.total_size();
 
   println!("Original egraph size: {}", egraph_size);
+
+    let true_str = "T";
+  let true_expr = HalideExpr.parse_expr(true_str).unwrap();
+  let true_id = egraph.add_expr(&true_expr);
+
+let fact1_4_str = "(and (> c1 0) (>= c2 0))";
+ let fact1_4_expr = HalideExpr.parse_expr(fact1_4_str).unwrap();
+ let fact1_4_id = egraph.add_expr(&fact1_4_expr);
+ egraph.union(fact1_4_id, true_id);
+let fact1_7_str = "(and (> c3 0) (>= c0 0))";
+ let fact1_7_expr = HalideExpr.parse_expr(fact1_7_str).unwrap();
+ let fact1_7_id = egraph.add_expr(&fact1_7_expr);
+ egraph.union(fact1_7_id, true_id);
+let fact1_11_str = "(and (> c1 0) (>= c0 0))";
+ let fact1_11_expr = HalideExpr.parse_expr(fact1_11_str).unwrap();
+ let fact1_11_id = egraph.add_expr(&fact1_11_expr);
+ egraph.union(fact1_11_id, true_id);
+let fact1_9_str = "(and (> c2 0) (>= c0 0))";
+ let fact1_9_expr = HalideExpr.parse_expr(fact1_9_str).unwrap();
+ let fact1_9_id = egraph.add_expr(&fact1_9_expr);
+ egraph.union(fact1_9_id, true_id);
+let fact1_0_str = "(and (> c2 0) (>= c3 0))";
+ let fact1_0_expr = HalideExpr.parse_expr(fact1_0_str).unwrap();
+ let fact1_0_id = egraph.add_expr(&fact1_0_expr);
+ egraph.union(fact1_0_id, true_id);
+let fact1_2_str = "(and (> c1 0) (>= c3 0))";
+ let fact1_2_expr = HalideExpr.parse_expr(fact1_2_str).unwrap();
+ let fact1_2_id = egraph.add_expr(&fact1_2_expr);
+ egraph.union(fact1_2_id, true_id);
+let fact1_8_str = "(and (> c0 0) (>= c2 0))";
+ let fact1_8_expr = HalideExpr.parse_expr(fact1_8_str).unwrap();
+ let fact1_8_id = egraph.add_expr(&fact1_8_expr);
+ egraph.union(fact1_8_id, true_id);
+let fact1_3_str = "(and (> c3 0) (>= c1 0))";
+ let fact1_3_expr = HalideExpr.parse_expr(fact1_3_str).unwrap();
+ let fact1_3_id = egraph.add_expr(&fact1_3_expr);
+ egraph.union(fact1_3_id, true_id);
+let fact1_5_str = "(and (> c2 0) (>= c1 0))";
+ let fact1_5_expr = HalideExpr.parse_expr(fact1_5_str).unwrap();
+ let fact1_5_id = egraph.add_expr(&fact1_5_expr);
+ egraph.union(fact1_5_id, true_id);
+let fact1_1_str = "(and (> c3 0) (>= c2 0))";
+ let fact1_1_expr = HalideExpr.parse_expr(fact1_1_str).unwrap();
+ let fact1_1_id = egraph.add_expr(&fact1_1_expr);
+ egraph.union(fact1_1_id, true_id);
+let fact1_10_str = "(and (> c0 0) (>= c1 0))";
+ let fact1_10_expr = HalideExpr.parse_expr(fact1_10_str).unwrap();
+ let fact1_10_id = egraph.add_expr(&fact1_10_expr);
+ egraph.union(fact1_10_id, true_id);
+let fact1_6_str = "(and (> c0 0) (>= c3 0))";
+ let fact1_6_expr = HalideExpr.parse_expr(fact1_6_str).unwrap();
+ let fact1_6_id = egraph.add_expr(&fact1_6_expr);
+ egraph.union(fact1_6_id, true_id);
+let fact2_7_str = "(and (> c1 0) (>= c0 c3))";
+ let fact2_7_expr = HalideExpr.parse_expr(fact2_7_str).unwrap();
+ let fact2_7_id = egraph.add_expr(&fact2_7_expr);
+ egraph.union(fact2_7_id, true_id);
+let fact2_11_str = "(and (> c2 0) (>= c0 c1))";
+ let fact2_11_expr = HalideExpr.parse_expr(fact2_11_str).unwrap();
+ let fact2_11_id = egraph.add_expr(&fact2_11_expr);
+ egraph.union(fact2_11_id, true_id);
+let fact2_8_str = "(and (> c3 0) (>= c0 c1))";
+ let fact2_8_expr = HalideExpr.parse_expr(fact2_8_str).unwrap();
+ let fact2_8_id = egraph.add_expr(&fact2_8_expr);
+ egraph.union(fact2_8_id, true_id);
+let fact2_9_str = "(and (> c0 0) (>= c1 c2))";
+ let fact2_9_expr = HalideExpr.parse_expr(fact2_9_str).unwrap();
+ let fact2_9_id = egraph.add_expr(&fact2_9_expr);
+ egraph.union(fact2_9_id, true_id);
+let fact2_6_str = "(and (> c0 0) (>= c1 c3))";
+ let fact2_6_expr = HalideExpr.parse_expr(fact2_6_str).unwrap();
+ let fact2_6_id = egraph.add_expr(&fact2_6_expr);
+ egraph.union(fact2_6_id, true_id);
+let fact2_0_str = "(and (> c1 0) (>= c2 c3))";
+ let fact2_0_expr = HalideExpr.parse_expr(fact2_0_str).unwrap();
+ let fact2_0_id = egraph.add_expr(&fact2_0_expr);
+ egraph.union(fact2_0_id, true_id);
+let fact2_2_str = "(and (> c3 0) (>= c1 c2))";
+ let fact2_2_expr = HalideExpr.parse_expr(fact2_2_str).unwrap();
+ let fact2_2_id = egraph.add_expr(&fact2_2_expr);
+ egraph.union(fact2_2_id, true_id);
+let fact2_4_str = "(and (> c2 0) (>= c0 c3))";
+ let fact2_4_expr = HalideExpr.parse_expr(fact2_4_str).unwrap();
+ let fact2_4_id = egraph.add_expr(&fact2_4_expr);
+ egraph.union(fact2_4_id, true_id);
+let fact2_10_str = "(and (> c1 0) (>= c0 c2))";
+ let fact2_10_expr = HalideExpr.parse_expr(fact2_10_str).unwrap();
+ let fact2_10_id = egraph.add_expr(&fact2_10_expr);
+ egraph.union(fact2_10_id, true_id);
+let fact2_5_str = "(and (> c3 0) (>= c0 c2))";
+ let fact2_5_expr = HalideExpr.parse_expr(fact2_5_str).unwrap();
+ let fact2_5_id = egraph.add_expr(&fact2_5_expr);
+ egraph.union(fact2_5_id, true_id);
+let fact2_1_str = "(and (> c2 0) (>= c1 c3))";
+ let fact2_1_expr = HalideExpr.parse_expr(fact2_1_str).unwrap();
+ let fact2_1_id = egraph.add_expr(&fact2_1_expr);
+ egraph.union(fact2_1_id, true_id);
+let fact2_3_str = "(and (> c0 0) (>= c2 c3))";
+ let fact2_3_expr = HalideExpr.parse_expr(fact2_3_str).unwrap();
+ let fact2_3_id = egraph.add_expr(&fact2_3_expr);
+ egraph.union(fact2_3_id, true_id);
+let fact3_2_str = "(and (and (> c0 0) (> c3 0)) (= (mod c0 c3) 0))";
+ let fact3_2_expr = HalideExpr.parse_expr(fact3_2_str).unwrap();
+ let fact3_2_id = egraph.add_expr(&fact3_2_expr);
+ egraph.union(fact3_2_id, true_id);
+let fact3_1_str = "(and (and (> c1 0) (> c3 0)) (= (mod c1 c3) 0))";
+ let fact3_1_expr = HalideExpr.parse_expr(fact3_1_str).unwrap();
+ let fact3_1_id = egraph.add_expr(&fact3_1_expr);
+ egraph.union(fact3_1_id, true_id);
+let fact3_0_str = "(and (and (> c2 0) (> c3 0)) (= (mod c2 c3) 0))";
+ let fact3_0_expr = HalideExpr.parse_expr(fact3_0_str).unwrap();
+ let fact3_0_id = egraph.add_expr(&fact3_0_expr);
+ egraph.union(fact3_0_id, true_id);
+let fact4_9_str = "(and (> c3 0) (>= (+ c0 c2) (- c3 c3)))";
+ let fact4_9_expr = HalideExpr.parse_expr(fact4_9_str).unwrap();
+ let fact4_9_id = egraph.add_expr(&fact4_9_expr);
+ egraph.union(fact4_9_id, true_id);
+let fact4_6_str = "(and (> c2 0) (>= (+ c3 c0) (- c2 c3)))";
+ let fact4_6_expr = HalideExpr.parse_expr(fact4_6_str).unwrap();
+ let fact4_6_id = egraph.add_expr(&fact4_6_expr);
+ egraph.union(fact4_6_id, true_id);
+let fact4_0_str = "(and (> c1 0) (>= (+ c3 c2) (- c1 c3)))";
+ let fact4_0_expr = HalideExpr.parse_expr(fact4_0_str).unwrap();
+ let fact4_0_id = egraph.add_expr(&fact4_0_expr);
+ egraph.union(fact4_0_id, true_id);
+let fact4_13_str = "(and (> c3 0) (>= (+ c0 c1) (- c3 c3)))";
+ let fact4_13_expr = HalideExpr.parse_expr(fact4_13_str).unwrap();
+ let fact4_13_id = egraph.add_expr(&fact4_13_expr);
+ egraph.union(fact4_13_id, true_id);
+let fact4_19_str = "(and (> c2 0) (>= (+ c0 c1) (- c2 c3)))";
+ let fact4_19_expr = HalideExpr.parse_expr(fact4_19_str).unwrap();
+ let fact4_19_id = egraph.add_expr(&fact4_19_expr);
+ egraph.union(fact4_19_id, true_id);
+let fact4_11_str = "(and (> c1 0) (>= (+ c0 c3) (- c1 c3)))";
+ let fact4_11_expr = HalideExpr.parse_expr(fact4_11_str).unwrap();
+ let fact4_11_id = egraph.add_expr(&fact4_11_expr);
+ egraph.union(fact4_11_id, true_id);
+let fact4_17_str = "(and (> c1 0) (>= (+ c0 c2) (- c1 c3)))";
+ let fact4_17_expr = HalideExpr.parse_expr(fact4_17_str).unwrap();
+ let fact4_17_id = egraph.add_expr(&fact4_17_expr);
+ egraph.union(fact4_17_id, true_id);
+let fact4_12_str = "(and (> c3 0) (>= (+ c1 c0) (- c3 c3)))";
+ let fact4_12_expr = HalideExpr.parse_expr(fact4_12_str).unwrap();
+ let fact4_12_id = egraph.add_expr(&fact4_12_expr);
+ egraph.union(fact4_12_id, true_id);
+let fact4_4_str = "(and (> c3 0) (>= (+ c2 c1) (- c3 c3)))";
+ let fact4_4_expr = HalideExpr.parse_expr(fact4_4_str).unwrap();
+ let fact4_4_id = egraph.add_expr(&fact4_4_expr);
+ egraph.union(fact4_4_id, true_id);
+let fact4_8_str = "(and (> c3 0) (>= (+ c2 c0) (- c3 c3)))";
+ let fact4_8_expr = HalideExpr.parse_expr(fact4_8_str).unwrap();
+ let fact4_8_id = egraph.add_expr(&fact4_8_expr);
+ egraph.union(fact4_8_id, true_id);
+let fact4_1_str = "(and (> c1 0) (>= (+ c2 c3) (- c1 c3)))";
+ let fact4_1_expr = HalideExpr.parse_expr(fact4_1_str).unwrap();
+ let fact4_1_id = egraph.add_expr(&fact4_1_expr);
+ egraph.union(fact4_1_id, true_id);
+let fact4_18_str = "(and (> c2 0) (>= (+ c1 c0) (- c2 c3)))";
+ let fact4_18_expr = HalideExpr.parse_expr(fact4_18_str).unwrap();
+ let fact4_18_id = egraph.add_expr(&fact4_18_expr);
+ egraph.union(fact4_18_id, true_id);
+let fact4_10_str = "(and (> c1 0) (>= (+ c3 c0) (- c1 c3)))";
+ let fact4_10_expr = HalideExpr.parse_expr(fact4_10_str).unwrap();
+ let fact4_10_id = egraph.add_expr(&fact4_10_expr);
+ egraph.union(fact4_10_id, true_id);
+let fact4_2_str = "(and (> c2 0) (>= (+ c3 c1) (- c2 c3)))";
+ let fact4_2_expr = HalideExpr.parse_expr(fact4_2_str).unwrap();
+ let fact4_2_id = egraph.add_expr(&fact4_2_expr);
+ egraph.union(fact4_2_id, true_id);
+let fact4_3_str = "(and (> c2 0) (>= (+ c1 c3) (- c2 c3)))";
+ let fact4_3_expr = HalideExpr.parse_expr(fact4_3_str).unwrap();
+ let fact4_3_id = egraph.add_expr(&fact4_3_expr);
+ egraph.union(fact4_3_id, true_id);
+let fact4_7_str = "(and (> c2 0) (>= (+ c0 c3) (- c2 c3)))";
+ let fact4_7_expr = HalideExpr.parse_expr(fact4_7_str).unwrap();
+ let fact4_7_id = egraph.add_expr(&fact4_7_expr);
+ egraph.union(fact4_7_id, true_id);
+let fact4_15_str = "(and (> c0 0) (>= (+ c1 c2) (- c0 c3)))";
+ let fact4_15_expr = HalideExpr.parse_expr(fact4_15_str).unwrap();
+ let fact4_15_id = egraph.add_expr(&fact4_15_expr);
+ egraph.union(fact4_15_id, true_id);
+let fact4_5_str = "(and (> c3 0) (>= (+ c1 c2) (- c3 c3)))";
+ let fact4_5_expr = HalideExpr.parse_expr(fact4_5_str).unwrap();
+ let fact4_5_id = egraph.add_expr(&fact4_5_expr);
+ egraph.union(fact4_5_id, true_id);
+let fact4_14_str = "(and (> c0 0) (>= (+ c2 c1) (- c0 c3)))";
+ let fact4_14_expr = HalideExpr.parse_expr(fact4_14_str).unwrap();
+ let fact4_14_id = egraph.add_expr(&fact4_14_expr);
+ egraph.union(fact4_14_id, true_id);
+let fact4_16_str = "(and (> c1 0) (>= (+ c2 c0) (- c1 c3)))";
+ let fact4_16_expr = HalideExpr.parse_expr(fact4_16_str).unwrap();
+ let fact4_16_id = egraph.add_expr(&fact4_16_expr);
+ egraph.union(fact4_16_id, true_id);
+let fact5_0_str = "(and (> c1 0) (= (+ c2 c3) c1))";
+ let fact5_0_expr = HalideExpr.parse_expr(fact5_0_str).unwrap();
+ let fact5_0_id = egraph.add_expr(&fact5_0_expr);
+ egraph.union(fact5_0_id, true_id);
+let fact6_0_str = "(= (mod c2 c3) 0)";
+ let fact6_0_expr = HalideExpr.parse_expr(fact6_0_str).unwrap();
+ let fact6_0_id = egraph.add_expr(&fact6_0_expr);
+ egraph.union(fact6_0_id, true_id);
+let fact6_2_str = "(= (mod c0 c3) 0)";
+ let fact6_2_expr = HalideExpr.parse_expr(fact6_2_str).unwrap();
+ let fact6_2_id = egraph.add_expr(&fact6_2_expr);
+ egraph.union(fact6_2_id, true_id);
+let fact6_1_str = "(= (mod c1 c3) 0)";
+ let fact6_1_expr = HalideExpr.parse_expr(fact6_1_str).unwrap();
+ let fact6_1_id = egraph.add_expr(&fact6_1_expr);
+ egraph.union(fact6_1_id, true_id);
+let fact8_3_str = "(> c0 0)";
+ let fact8_3_expr = HalideExpr.parse_expr(fact8_3_str).unwrap();
+ let fact8_3_id = egraph.add_expr(&fact8_3_expr);
+ egraph.union(fact8_3_id, true_id);
+let fact8_1_str = "(> c2 0)";
+ let fact8_1_expr = HalideExpr.parse_expr(fact8_1_str).unwrap();
+ let fact8_1_id = egraph.add_expr(&fact8_1_expr);
+ egraph.union(fact8_1_id, true_id);
+let fact8_2_str = "(> c1 0)";
+ let fact8_2_expr = HalideExpr.parse_expr(fact8_2_str).unwrap();
+ let fact8_2_id = egraph.add_expr(&fact8_2_expr);
+ egraph.union(fact8_2_id, true_id);
+let fact8_0_str = "(> c3 0)";
+ let fact8_0_expr = HalideExpr.parse_expr(fact8_0_str).unwrap();
+ let fact8_0_id = egraph.add_expr(&fact8_0_expr);
+ egraph.union(fact8_0_id, true_id);
+let fact10_2_str = "(and (= (mod c0 c3) 0) (> c3 0))";
+ let fact10_2_expr = HalideExpr.parse_expr(fact10_2_str).unwrap();
+ let fact10_2_id = egraph.add_expr(&fact10_2_expr);
+ egraph.union(fact10_2_id, true_id);
+let fact10_0_str = "(and (= (mod c2 c3) 0) (> c3 0))";
+ let fact10_0_expr = HalideExpr.parse_expr(fact10_0_str).unwrap();
+ let fact10_0_id = egraph.add_expr(&fact10_0_expr);
+ egraph.union(fact10_0_id, true_id);
+let fact10_1_str = "(and (= (mod c1 c3) 0) (> c3 0))";
+ let fact10_1_expr = HalideExpr.parse_expr(fact10_1_str).unwrap();
+ let fact10_1_id = egraph.add_expr(&fact10_1_expr);
+ egraph.union(fact10_1_id, true_id);
+let fact11_1_str = "(< c3 c1)";
+ let fact11_1_expr = HalideExpr.parse_expr(fact11_1_str).unwrap();
+ let fact11_1_id = egraph.add_expr(&fact11_1_expr);
+ egraph.union(fact11_1_id, true_id);
+let fact11_3_str = "(< c3 c0)";
+ let fact11_3_expr = HalideExpr.parse_expr(fact11_3_str).unwrap();
+ let fact11_3_id = egraph.add_expr(&fact11_3_expr);
+ egraph.union(fact11_3_id, true_id);
+let fact11_0_str = "(< c3 c2)";
+ let fact11_0_expr = HalideExpr.parse_expr(fact11_0_str).unwrap();
+ let fact11_0_id = egraph.add_expr(&fact11_0_expr);
+ egraph.union(fact11_0_id, true_id);
+let fact11_2_str = "(< c2 c1)";
+ let fact11_2_expr = HalideExpr.parse_expr(fact11_2_str).unwrap();
+ let fact11_2_id = egraph.add_expr(&fact11_2_expr);
+ egraph.union(fact11_2_id, true_id);
+let fact11_5_str = "(< c1 c0)";
+ let fact11_5_expr = HalideExpr.parse_expr(fact11_5_str).unwrap();
+ let fact11_5_id = egraph.add_expr(&fact11_5_expr);
+ egraph.union(fact11_5_id, true_id);
+let fact11_4_str = "(< c2 c0)";
+ let fact11_4_expr = HalideExpr.parse_expr(fact11_4_str).unwrap();
+ let fact11_4_id = egraph.add_expr(&fact11_4_expr);
+ egraph.union(fact11_4_id, true_id);
+let fact12_2_str = "(>= c0 (+ c3 c2))";
+ let fact12_2_expr = HalideExpr.parse_expr(fact12_2_str).unwrap();
+ let fact12_2_id = egraph.add_expr(&fact12_2_expr);
+ egraph.union(fact12_2_id, true_id);
+let fact12_6_str = "(>= c0 (+ c2 c1))";
+ let fact12_6_expr = HalideExpr.parse_expr(fact12_6_str).unwrap();
+ let fact12_6_id = egraph.add_expr(&fact12_6_expr);
+ egraph.union(fact12_6_id, true_id);
+let fact12_7_str = "(>= c0 (+ c1 c2))";
+ let fact12_7_expr = HalideExpr.parse_expr(fact12_7_str).unwrap();
+ let fact12_7_id = egraph.add_expr(&fact12_7_expr);
+ egraph.union(fact12_7_id, true_id);
+let fact12_5_str = "(>= c0 (+ c1 c3))";
+ let fact12_5_expr = HalideExpr.parse_expr(fact12_5_str).unwrap();
+ let fact12_5_id = egraph.add_expr(&fact12_5_expr);
+ egraph.union(fact12_5_id, true_id);
+let fact12_3_str = "(>= c0 (+ c2 c3))";
+ let fact12_3_expr = HalideExpr.parse_expr(fact12_3_str).unwrap();
+ let fact12_3_id = egraph.add_expr(&fact12_3_expr);
+ egraph.union(fact12_3_id, true_id);
+let fact12_0_str = "(>= c1 (+ c3 c2))";
+ let fact12_0_expr = HalideExpr.parse_expr(fact12_0_str).unwrap();
+ let fact12_0_id = egraph.add_expr(&fact12_0_expr);
+ egraph.union(fact12_0_id, true_id);
+let fact12_1_str = "(>= c1 (+ c2 c3))";
+ let fact12_1_expr = HalideExpr.parse_expr(fact12_1_str).unwrap();
+ let fact12_1_id = egraph.add_expr(&fact12_1_expr);
+ egraph.union(fact12_1_id, true_id);
+let fact12_4_str = "(>= c0 (+ c3 c1))";
+ let fact12_4_expr = HalideExpr.parse_expr(fact12_4_str).unwrap();
+ let fact12_4_id = egraph.add_expr(&fact12_4_expr);
+ egraph.union(fact12_4_id, true_id);
+let fact15_1_str = "(= (mod c2 2) c3)";
+ let fact15_1_expr = HalideExpr.parse_expr(fact15_1_str).unwrap();
+ let fact15_1_id = egraph.add_expr(&fact15_1_expr);
+ egraph.union(fact15_1_id, true_id);
+let fact15_0_str = "(= (mod c3 2) c3)";
+ let fact15_0_expr = HalideExpr.parse_expr(fact15_0_str).unwrap();
+ let fact15_0_id = egraph.add_expr(&fact15_0_expr);
+ egraph.union(fact15_0_id, true_id);
+let fact15_2_str = "(= (mod c0 2) c3)";
+ let fact15_2_expr = HalideExpr.parse_expr(fact15_2_str).unwrap();
+ let fact15_2_id = egraph.add_expr(&fact15_2_expr);
+ egraph.union(fact15_2_id, true_id);
+let fact16_1_str = "(and (> c3 0) (= (mod c1 c3) 0))";
+ let fact16_1_expr = HalideExpr.parse_expr(fact16_1_str).unwrap();
+ let fact16_1_id = egraph.add_expr(&fact16_1_expr);
+ egraph.union(fact16_1_id, true_id);
+let fact16_2_str = "(and (> c3 0) (= (mod c0 c3) 0))";
+ let fact16_2_expr = HalideExpr.parse_expr(fact16_2_str).unwrap();
+ let fact16_2_id = egraph.add_expr(&fact16_2_expr);
+ egraph.union(fact16_2_id, true_id);
+let fact16_0_str = "(and (> c3 0) (= (mod c2 c3) 0))";
+ let fact16_0_expr = HalideExpr.parse_expr(fact16_0_str).unwrap();
+ let fact16_0_id = egraph.add_expr(&fact16_0_expr);
+ egraph.union(fact16_0_id, true_id);
+let fact17_4_str = "(and (> c2 0) (or (>= c0 c2) (< c0 0)))";
+ let fact17_4_expr = HalideExpr.parse_expr(fact17_4_str).unwrap();
+ let fact17_4_id = egraph.add_expr(&fact17_4_expr);
+ egraph.union(fact17_4_id, true_id);
+let fact17_0_str = "(and (> c3 0) (or (>= c2 c3) (< c2 0)))";
+ let fact17_0_expr = HalideExpr.parse_expr(fact17_0_str).unwrap();
+ let fact17_0_id = egraph.add_expr(&fact17_0_expr);
+ egraph.union(fact17_0_id, true_id);
+let fact17_3_str = "(and (> c3 0) (or (>= c0 c3) (< c0 0)))";
+ let fact17_3_expr = HalideExpr.parse_expr(fact17_3_str).unwrap();
+ let fact17_3_id = egraph.add_expr(&fact17_3_expr);
+ egraph.union(fact17_3_id, true_id);
+let fact17_2_str = "(and (> c2 0) (or (>= c1 c2) (< c1 0)))";
+ let fact17_2_expr = HalideExpr.parse_expr(fact17_2_str).unwrap();
+ let fact17_2_id = egraph.add_expr(&fact17_2_expr);
+ egraph.union(fact17_2_id, true_id);
+let fact17_5_str = "(and (> c1 0) (or (>= c0 c1) (< c0 0)))";
+ let fact17_5_expr = HalideExpr.parse_expr(fact17_5_str).unwrap();
+ let fact17_5_id = egraph.add_expr(&fact17_5_expr);
+ egraph.union(fact17_5_id, true_id);
+let fact17_1_str = "(and (> c3 0) (or (>= c1 c3) (< c1 0)))";
+ let fact17_1_expr = HalideExpr.parse_expr(fact17_1_str).unwrap();
+ let fact17_1_id = egraph.add_expr(&fact17_1_expr);
+ egraph.union(fact17_1_id, true_id);
+let fact21_0_str = "(and (> c3 0) (<= 0 (- c2 c3)))";
+ let fact21_0_expr = HalideExpr.parse_expr(fact21_0_str).unwrap();
+ let fact21_0_id = egraph.add_expr(&fact21_0_expr);
+ egraph.union(fact21_0_id, true_id);
+let fact21_5_str = "(and (> c1 0) (<= 0 (- c0 c1)))";
+ let fact21_5_expr = HalideExpr.parse_expr(fact21_5_str).unwrap();
+ let fact21_5_id = egraph.add_expr(&fact21_5_expr);
+ egraph.union(fact21_5_id, true_id);
+let fact21_3_str = "(and (> c3 0) (<= 0 (- c0 c3)))";
+ let fact21_3_expr = HalideExpr.parse_expr(fact21_3_str).unwrap();
+ let fact21_3_id = egraph.add_expr(&fact21_3_expr);
+ egraph.union(fact21_3_id, true_id);
+let fact21_2_str = "(and (> c2 0) (<= 0 (- c1 c2)))";
+ let fact21_2_expr = HalideExpr.parse_expr(fact21_2_str).unwrap();
+ let fact21_2_id = egraph.add_expr(&fact21_2_expr);
+ egraph.union(fact21_2_id, true_id);
+let fact21_4_str = "(and (> c2 0) (<= 0 (- c0 c2)))";
+ let fact21_4_expr = HalideExpr.parse_expr(fact21_4_str).unwrap();
+ let fact21_4_id = egraph.add_expr(&fact21_4_expr);
+ egraph.union(fact21_4_id, true_id);
+let fact21_1_str = "(and (> c3 0) (<= 0 (- c1 c3)))";
+ let fact21_1_expr = HalideExpr.parse_expr(fact21_1_str).unwrap();
+ let fact21_1_id = egraph.add_expr(&fact21_1_expr);
+ egraph.union(fact21_1_id, true_id);
+let fact23_3_str = "(!= c0 0)";
+ let fact23_3_expr = HalideExpr.parse_expr(fact23_3_str).unwrap();
+ let fact23_3_id = egraph.add_expr(&fact23_3_expr);
+ egraph.union(fact23_3_id, true_id);
+let fact23_2_str = "(!= c1 0)";
+ let fact23_2_expr = HalideExpr.parse_expr(fact23_2_str).unwrap();
+ let fact23_2_id = egraph.add_expr(&fact23_2_expr);
+ egraph.union(fact23_2_id, true_id);
+let fact23_1_str = "(!= c2 0)";
+ let fact23_1_expr = HalideExpr.parse_expr(fact23_1_str).unwrap();
+ let fact23_1_id = egraph.add_expr(&fact23_1_expr);
+ egraph.union(fact23_1_id, true_id);
+let fact23_0_str = "(!= c3 0)";
+ let fact23_0_expr = HalideExpr.parse_expr(fact23_0_str).unwrap();
+ let fact23_0_id = egraph.add_expr(&fact23_0_expr);
+ egraph.union(fact23_0_id, true_id);
+let fact24_2_str = "(and (> c2 0) (<= c2 c1))";
+ let fact24_2_expr = HalideExpr.parse_expr(fact24_2_str).unwrap();
+ let fact24_2_id = egraph.add_expr(&fact24_2_expr);
+ egraph.union(fact24_2_id, true_id);
+let fact24_3_str = "(and (> c3 0) (<= c3 c0))";
+ let fact24_3_expr = HalideExpr.parse_expr(fact24_3_str).unwrap();
+ let fact24_3_id = egraph.add_expr(&fact24_3_expr);
+ egraph.union(fact24_3_id, true_id);
+let fact24_4_str = "(and (> c2 0) (<= c2 c0))";
+ let fact24_4_expr = HalideExpr.parse_expr(fact24_4_str).unwrap();
+ let fact24_4_id = egraph.add_expr(&fact24_4_expr);
+ egraph.union(fact24_4_id, true_id);
+let fact24_5_str = "(and (> c1 0) (<= c1 c0))";
+ let fact24_5_expr = HalideExpr.parse_expr(fact24_5_str).unwrap();
+ let fact24_5_id = egraph.add_expr(&fact24_5_expr);
+ egraph.union(fact24_5_id, true_id);
+let fact24_1_str = "(and (> c3 0) (<= c3 c1))";
+ let fact24_1_expr = HalideExpr.parse_expr(fact24_1_str).unwrap();
+ let fact24_1_id = egraph.add_expr(&fact24_1_expr);
+ egraph.union(fact24_1_id, true_id);
+let fact24_0_str = "(and (> c3 0) (<= c3 c2))";
+ let fact24_0_expr = HalideExpr.parse_expr(fact24_0_str).unwrap();
+ let fact24_0_id = egraph.add_expr(&fact24_0_expr);
+ egraph.union(fact24_0_id, true_id);
+let fact25_2_str = "(and (> c1 0) (>= c2 (- c1 c3)))";
+ let fact25_2_expr = HalideExpr.parse_expr(fact25_2_str).unwrap();
+ let fact25_2_id = egraph.add_expr(&fact25_2_expr);
+ egraph.union(fact25_2_id, true_id);
+let fact25_1_str = "(and (> c3 0) (>= c1 (- c3 c3)))";
+ let fact25_1_expr = HalideExpr.parse_expr(fact25_1_str).unwrap();
+ let fact25_1_id = egraph.add_expr(&fact25_1_expr);
+ egraph.union(fact25_1_id, true_id);
+let fact25_4_str = "(and (> c3 0) (>= c0 (- c3 c3)))";
+ let fact25_4_expr = HalideExpr.parse_expr(fact25_4_str).unwrap();
+ let fact25_4_id = egraph.add_expr(&fact25_4_expr);
+ egraph.union(fact25_4_id, true_id);
+let fact25_6_str = "(and (> c1 0) (>= c0 (- c1 c3)))";
+ let fact25_6_expr = HalideExpr.parse_expr(fact25_6_str).unwrap();
+ let fact25_6_id = egraph.add_expr(&fact25_6_expr);
+ egraph.union(fact25_6_id, true_id);
+let fact25_0_str = "(and (> c3 0) (>= c2 (- c3 c3)))";
+ let fact25_0_expr = HalideExpr.parse_expr(fact25_0_str).unwrap();
+ let fact25_0_id = egraph.add_expr(&fact25_0_expr);
+ egraph.union(fact25_0_id, true_id);
+let fact25_3_str = "(and (> c2 0) (>= c1 (- c2 c3)))";
+ let fact25_3_expr = HalideExpr.parse_expr(fact25_3_str).unwrap();
+ let fact25_3_id = egraph.add_expr(&fact25_3_expr);
+ egraph.union(fact25_3_id, true_id);
+let fact25_5_str = "(and (> c2 0) (>= c0 (- c2 c3)))";
+ let fact25_5_expr = HalideExpr.parse_expr(fact25_5_str).unwrap();
+ let fact25_5_id = egraph.add_expr(&fact25_5_expr);
+ egraph.union(fact25_5_id, true_id);
+let fact26_1_str = "(<= c3 c1)";
+ let fact26_1_expr = HalideExpr.parse_expr(fact26_1_str).unwrap();
+ let fact26_1_id = egraph.add_expr(&fact26_1_expr);
+ egraph.union(fact26_1_id, true_id);
+let fact26_3_str = "(<= c3 c0)";
+ let fact26_3_expr = HalideExpr.parse_expr(fact26_3_str).unwrap();
+ let fact26_3_id = egraph.add_expr(&fact26_3_expr);
+ egraph.union(fact26_3_id, true_id);
+let fact26_4_str = "(<= c2 c0)";
+ let fact26_4_expr = HalideExpr.parse_expr(fact26_4_str).unwrap();
+ let fact26_4_id = egraph.add_expr(&fact26_4_expr);
+ egraph.union(fact26_4_id, true_id);
+let fact26_0_str = "(<= c3 c2)";
+ let fact26_0_expr = HalideExpr.parse_expr(fact26_0_str).unwrap();
+ let fact26_0_id = egraph.add_expr(&fact26_0_expr);
+ egraph.union(fact26_0_id, true_id);
+let fact26_5_str = "(<= c1 c0)";
+ let fact26_5_expr = HalideExpr.parse_expr(fact26_5_str).unwrap();
+ let fact26_5_id = egraph.add_expr(&fact26_5_expr);
+ egraph.union(fact26_5_id, true_id);
+let fact26_2_str = "(<= c2 c1)";
+ let fact26_2_expr = HalideExpr.parse_expr(fact26_2_str).unwrap();
+ let fact26_2_id = egraph.add_expr(&fact26_2_expr);
+ egraph.union(fact26_2_id, true_id);
+let fact27_0_str = "(= c1 (+ c2 c3))";
+ let fact27_0_expr = HalideExpr.parse_expr(fact27_0_str).unwrap();
+ let fact27_0_id = egraph.add_expr(&fact27_0_expr);
+ egraph.union(fact27_0_id, true_id);
+let fact28_3_str = "(and (> c3 0) (<= c2 (- c0 c3)))";
+ let fact28_3_expr = HalideExpr.parse_expr(fact28_3_str).unwrap();
+ let fact28_3_id = egraph.add_expr(&fact28_3_expr);
+ egraph.union(fact28_3_id, true_id);
+let fact28_7_str = "(and (> c2 0) (<= c1 (- c0 c2)))";
+ let fact28_7_expr = HalideExpr.parse_expr(fact28_7_str).unwrap();
+ let fact28_7_id = egraph.add_expr(&fact28_7_expr);
+ egraph.union(fact28_7_id, true_id);
+let fact28_5_str = "(and (> c3 0) (<= c1 (- c0 c3)))";
+ let fact28_5_expr = HalideExpr.parse_expr(fact28_5_str).unwrap();
+ let fact28_5_id = egraph.add_expr(&fact28_5_expr);
+ egraph.union(fact28_5_id, true_id);
+let fact28_4_str = "(and (> c1 0) (<= c3 (- c0 c1)))";
+ let fact28_4_expr = HalideExpr.parse_expr(fact28_4_str).unwrap();
+ let fact28_4_id = egraph.add_expr(&fact28_4_expr);
+ egraph.union(fact28_4_id, true_id);
+let fact28_2_str = "(and (> c2 0) (<= c3 (- c0 c2)))";
+ let fact28_2_expr = HalideExpr.parse_expr(fact28_2_str).unwrap();
+ let fact28_2_id = egraph.add_expr(&fact28_2_expr);
+ egraph.union(fact28_2_id, true_id);
+let fact28_6_str = "(and (> c1 0) (<= c2 (- c0 c1)))";
+ let fact28_6_expr = HalideExpr.parse_expr(fact28_6_str).unwrap();
+ let fact28_6_id = egraph.add_expr(&fact28_6_expr);
+ egraph.union(fact28_6_id, true_id);
+let fact28_1_str = "(and (> c3 0) (<= c2 (- c1 c3)))";
+ let fact28_1_expr = HalideExpr.parse_expr(fact28_1_str).unwrap();
+ let fact28_1_id = egraph.add_expr(&fact28_1_expr);
+ egraph.union(fact28_1_id, true_id);
+let fact28_0_str = "(and (> c2 0) (<= c3 (- c1 c2)))";
+ let fact28_0_expr = HalideExpr.parse_expr(fact28_0_str).unwrap();
+ let fact28_0_id = egraph.add_expr(&fact28_0_expr);
+ egraph.union(fact28_0_id, true_id);
+let fact29_0_str = "(>= c3 0)";
+ let fact29_0_expr = HalideExpr.parse_expr(fact29_0_str).unwrap();
+ let fact29_0_id = egraph.add_expr(&fact29_0_expr);
+ egraph.union(fact29_0_id, true_id);
+let fact29_2_str = "(>= c1 0)";
+ let fact29_2_expr = HalideExpr.parse_expr(fact29_2_str).unwrap();
+ let fact29_2_id = egraph.add_expr(&fact29_2_expr);
+ egraph.union(fact29_2_id, true_id);
+let fact29_3_str = "(>= c0 0)";
+ let fact29_3_expr = HalideExpr.parse_expr(fact29_3_str).unwrap();
+ let fact29_3_id = egraph.add_expr(&fact29_3_expr);
+ egraph.union(fact29_3_id, true_id);
+let fact29_1_str = "(>= c2 0)";
+ let fact29_1_expr = HalideExpr.parse_expr(fact29_1_str).unwrap();
+ let fact29_1_id = egraph.add_expr(&fact29_1_expr);
+ egraph.union(fact29_1_id, true_id);
+let fact31_2_str = "(or (= c0 (+ c2 c1)) (= c0 (+ (+ c2 c1) c3)))";
+ let fact31_2_expr = HalideExpr.parse_expr(fact31_2_str).unwrap();
+ let fact31_2_id = egraph.add_expr(&fact31_2_expr);
+ egraph.union(fact31_2_id, true_id);
+let fact31_1_str = "(or (= c1 (+ c2 c3)) (= c1 (+ (+ c2 c3) c3)))";
+ let fact31_1_expr = HalideExpr.parse_expr(fact31_1_str).unwrap();
+ let fact31_1_id = egraph.add_expr(&fact31_1_expr);
+ egraph.union(fact31_1_id, true_id);
+let fact31_0_str = "(or (= c1 (+ c3 c2)) (= c1 (+ (+ c3 c2) c3)))";
+ let fact31_0_expr = HalideExpr.parse_expr(fact31_0_str).unwrap();
+ let fact31_0_id = egraph.add_expr(&fact31_0_expr);
+ egraph.union(fact31_0_id, true_id);
+let fact31_3_str = "(or (= c0 (+ c1 c2)) (= c0 (+ (+ c1 c2) c3)))";
+ let fact31_3_expr = HalideExpr.parse_expr(fact31_3_str).unwrap();
+ let fact31_3_id = egraph.add_expr(&fact31_3_expr);
+ egraph.union(fact31_3_id, true_id);
+let fact32_2_str = "(> c1 c2)";
+ let fact32_2_expr = HalideExpr.parse_expr(fact32_2_str).unwrap();
+ let fact32_2_id = egraph.add_expr(&fact32_2_expr);
+ egraph.union(fact32_2_id, true_id);
+let fact32_4_str = "(> c0 c2)";
+ let fact32_4_expr = HalideExpr.parse_expr(fact32_4_str).unwrap();
+ let fact32_4_id = egraph.add_expr(&fact32_4_expr);
+ egraph.union(fact32_4_id, true_id);
+let fact32_1_str = "(> c1 c3)";
+ let fact32_1_expr = HalideExpr.parse_expr(fact32_1_str).unwrap();
+ let fact32_1_id = egraph.add_expr(&fact32_1_expr);
+ egraph.union(fact32_1_id, true_id);
+let fact32_0_str = "(> c2 c3)";
+ let fact32_0_expr = HalideExpr.parse_expr(fact32_0_str).unwrap();
+ let fact32_0_id = egraph.add_expr(&fact32_0_expr);
+ egraph.union(fact32_0_id, true_id);
+let fact32_5_str = "(> c0 c1)";
+ let fact32_5_expr = HalideExpr.parse_expr(fact32_5_str).unwrap();
+ let fact32_5_id = egraph.add_expr(&fact32_5_expr);
+ egraph.union(fact32_5_id, true_id);
+let fact32_3_str = "(> c0 c3)";
+ let fact32_3_expr = HalideExpr.parse_expr(fact32_3_str).unwrap();
+ let fact32_3_id = egraph.add_expr(&fact32_3_expr);
+ egraph.union(fact32_3_id, true_id);
+let fact34_0_str = "(= (+ c2 c3) c1)";
+ let fact34_0_expr = HalideExpr.parse_expr(fact34_0_str).unwrap();
+ let fact34_0_id = egraph.add_expr(&fact34_0_expr);
+ egraph.union(fact34_0_id, true_id);
+let fact35_2_str = "(or (= c0 (+ c2 c1)) (= (+ c0 c3) (+ c2 c1)))";
+ let fact35_2_expr = HalideExpr.parse_expr(fact35_2_str).unwrap();
+ let fact35_2_id = egraph.add_expr(&fact35_2_expr);
+ egraph.union(fact35_2_id, true_id);
+let fact35_1_str = "(or (= c1 (+ c2 c3)) (= (+ c1 c3) (+ c2 c3)))";
+ let fact35_1_expr = HalideExpr.parse_expr(fact35_1_str).unwrap();
+ let fact35_1_id = egraph.add_expr(&fact35_1_expr);
+ egraph.union(fact35_1_id, true_id);
+let fact35_3_str = "(or (= c0 (+ c1 c2)) (= (+ c0 c3) (+ c1 c2)))";
+ let fact35_3_expr = HalideExpr.parse_expr(fact35_3_str).unwrap();
+ let fact35_3_id = egraph.add_expr(&fact35_3_expr);
+ egraph.union(fact35_3_id, true_id);
+let fact35_0_str = "(or (= c1 (+ c3 c2)) (= (+ c1 c3) (+ c3 c2)))";
+ let fact35_0_expr = HalideExpr.parse_expr(fact35_0_str).unwrap();
+ let fact35_0_id = egraph.add_expr(&fact35_0_expr);
+ egraph.union(fact35_0_id, true_id);
+let fact37_4_str = "(and (> c1 0) (>= c0 (* c3 c1)))";
+ let fact37_4_expr = HalideExpr.parse_expr(fact37_4_str).unwrap();
+ let fact37_4_id = egraph.add_expr(&fact37_4_expr);
+ egraph.union(fact37_4_id, true_id);
+let fact37_0_str = "(and (> c2 0) (>= c1 (* c3 c2)))";
+ let fact37_0_expr = HalideExpr.parse_expr(fact37_0_str).unwrap();
+ let fact37_0_id = egraph.add_expr(&fact37_0_expr);
+ egraph.union(fact37_0_id, true_id);
+let fact37_2_str = "(and (> c2 0) (>= c0 (* c3 c2)))";
+ let fact37_2_expr = HalideExpr.parse_expr(fact37_2_str).unwrap();
+ let fact37_2_id = egraph.add_expr(&fact37_2_expr);
+ egraph.union(fact37_2_id, true_id);
+let fact37_5_str = "(and (> c3 0) (>= c0 (* c1 c3)))";
+ let fact37_5_expr = HalideExpr.parse_expr(fact37_5_str).unwrap();
+ let fact37_5_id = egraph.add_expr(&fact37_5_expr);
+ egraph.union(fact37_5_id, true_id);
+let fact37_3_str = "(and (> c3 0) (>= c0 (* c2 c3)))";
+ let fact37_3_expr = HalideExpr.parse_expr(fact37_3_str).unwrap();
+ let fact37_3_id = egraph.add_expr(&fact37_3_expr);
+ egraph.union(fact37_3_id, true_id);
+let fact37_1_str = "(and (> c3 0) (>= c1 (* c2 c3)))";
+ let fact37_1_expr = HalideExpr.parse_expr(fact37_1_str).unwrap();
+ let fact37_1_id = egraph.add_expr(&fact37_1_expr);
+ egraph.union(fact37_1_id, true_id);
+let fact38_5_str = "(>= c0 c1)";
+ let fact38_5_expr = HalideExpr.parse_expr(fact38_5_str).unwrap();
+ let fact38_5_id = egraph.add_expr(&fact38_5_expr);
+ egraph.union(fact38_5_id, true_id);
+let fact38_3_str = "(>= c0 c3)";
+ let fact38_3_expr = HalideExpr.parse_expr(fact38_3_str).unwrap();
+ let fact38_3_id = egraph.add_expr(&fact38_3_expr);
+ egraph.union(fact38_3_id, true_id);
+let fact38_2_str = "(>= c1 c2)";
+ let fact38_2_expr = HalideExpr.parse_expr(fact38_2_str).unwrap();
+ let fact38_2_id = egraph.add_expr(&fact38_2_expr);
+ egraph.union(fact38_2_id, true_id);
+let fact38_4_str = "(>= c0 c2)";
+ let fact38_4_expr = HalideExpr.parse_expr(fact38_4_str).unwrap();
+ let fact38_4_id = egraph.add_expr(&fact38_4_expr);
+ egraph.union(fact38_4_id, true_id);
+let fact38_1_str = "(>= c1 c3)";
+ let fact38_1_expr = HalideExpr.parse_expr(fact38_1_str).unwrap();
+ let fact38_1_id = egraph.add_expr(&fact38_1_expr);
+ egraph.union(fact38_1_id, true_id);
+let fact38_0_str = "(>= c2 c3)";
+ let fact38_0_expr = HalideExpr.parse_expr(fact38_0_str).unwrap();
+ let fact38_0_id = egraph.add_expr(&fact38_0_expr);
+ egraph.union(fact38_0_id, true_id);
+let fact41_1_str = "(and (> c2 0) (<= c3 (- (* c1 c2) c2)))";
+ let fact41_1_expr = HalideExpr.parse_expr(fact41_1_str).unwrap();
+ let fact41_1_id = egraph.add_expr(&fact41_1_expr);
+ egraph.union(fact41_1_id, true_id);
+let fact41_3_str = "(and (> c0 0) (<= c3 (- (* c2 c0) c0)))";
+ let fact41_3_expr = HalideExpr.parse_expr(fact41_3_str).unwrap();
+ let fact41_3_id = egraph.add_expr(&fact41_3_expr);
+ egraph.union(fact41_3_id, true_id);
+let fact41_7_str = "(and (> c1 0) (<= c3 (- (* c0 c1) c1)))";
+ let fact41_7_expr = HalideExpr.parse_expr(fact41_7_str).unwrap();
+ let fact41_7_id = egraph.add_expr(&fact41_7_expr);
+ egraph.union(fact41_7_id, true_id);
+let fact41_0_str = "(and (> c1 0) (<= c3 (- (* c2 c1) c1)))";
+ let fact41_0_expr = HalideExpr.parse_expr(fact41_0_str).unwrap();
+ let fact41_0_id = egraph.add_expr(&fact41_0_expr);
+ egraph.union(fact41_0_id, true_id);
+let fact41_4_str = "(and (> c2 0) (<= c3 (- (* c0 c2) c2)))";
+ let fact41_4_expr = HalideExpr.parse_expr(fact41_4_str).unwrap();
+ let fact41_4_id = egraph.add_expr(&fact41_4_expr);
+ egraph.union(fact41_4_id, true_id);
+let fact41_13_str = "(and (> c2 0) (<= c1 (- (* c0 c2) c2)))";
+ let fact41_13_expr = HalideExpr.parse_expr(fact41_13_str).unwrap();
+ let fact41_13_id = egraph.add_expr(&fact41_13_expr);
+ egraph.union(fact41_13_id, true_id);
+let fact41_12_str = "(and (> c1 0) (<= c0 (- (* c2 c1) c1)))";
+ let fact41_12_expr = HalideExpr.parse_expr(fact41_12_str).unwrap();
+ let fact41_12_id = egraph.add_expr(&fact41_12_expr);
+ egraph.union(fact41_12_id, true_id);
+let fact41_11_str = "(and (> c1 0) (<= c2 (- (* c0 c1) c1)))";
+ let fact41_11_expr = HalideExpr.parse_expr(fact41_11_str).unwrap();
+ let fact41_11_id = egraph.add_expr(&fact41_11_expr);
+ egraph.union(fact41_11_id, true_id);
+let fact41_10_str = "(and (> c0 0) (<= c1 (- (* c2 c0) c0)))";
+ let fact41_10_expr = HalideExpr.parse_expr(fact41_10_str).unwrap();
+ let fact41_10_id = egraph.add_expr(&fact41_10_expr);
+ egraph.union(fact41_10_id, true_id);
+let fact41_2_str = "(and (> c3 0) (<= c2 (- (* c1 c3) c3)))";
+ let fact41_2_expr = HalideExpr.parse_expr(fact41_2_str).unwrap();
+ let fact41_2_id = egraph.add_expr(&fact41_2_expr);
+ egraph.union(fact41_2_id, true_id);
+let fact41_8_str = "(and (> c3 0) (<= c1 (- (* c0 c3) c3)))";
+ let fact41_8_expr = HalideExpr.parse_expr(fact41_8_str).unwrap();
+ let fact41_8_id = egraph.add_expr(&fact41_8_expr);
+ egraph.union(fact41_8_id, true_id);
+let fact41_14_str = "(and (> c2 0) (<= c0 (- (* c1 c2) c2)))";
+ let fact41_14_expr = HalideExpr.parse_expr(fact41_14_str).unwrap();
+ let fact41_14_id = egraph.add_expr(&fact41_14_expr);
+ egraph.union(fact41_14_id, true_id);
+let fact41_6_str = "(and (> c0 0) (<= c3 (- (* c1 c0) c0)))";
+ let fact41_6_expr = HalideExpr.parse_expr(fact41_6_str).unwrap();
+ let fact41_6_id = egraph.add_expr(&fact41_6_expr);
+ egraph.union(fact41_6_id, true_id);
+let fact41_9_str = "(and (> c0 0) (<= c2 (- (* c1 c0) c0)))";
+ let fact41_9_expr = HalideExpr.parse_expr(fact41_9_str).unwrap();
+ let fact41_9_id = egraph.add_expr(&fact41_9_expr);
+ egraph.union(fact41_9_id, true_id);
+let fact41_5_str = "(and (> c3 0) (<= c2 (- (* c0 c3) c3)))";
+ let fact41_5_expr = HalideExpr.parse_expr(fact41_5_str).unwrap();
+ let fact41_5_id = egraph.add_expr(&fact41_5_expr);
+ egraph.union(fact41_5_id, true_id);
+let fact42_8_str = "(> (+ c0 c2) 0)";
+ let fact42_8_expr = HalideExpr.parse_expr(fact42_8_str).unwrap();
+ let fact42_8_id = egraph.add_expr(&fact42_8_expr);
+ egraph.union(fact42_8_id, true_id);
+let fact42_11_str = "(> (+ c1 c0) 0)";
+ let fact42_11_expr = HalideExpr.parse_expr(fact42_11_str).unwrap();
+ let fact42_11_id = egraph.add_expr(&fact42_11_expr);
+ egraph.union(fact42_11_id, true_id);
+let fact42_10_str = "(> (+ c0 c1) 0)";
+ let fact42_10_expr = HalideExpr.parse_expr(fact42_10_str).unwrap();
+ let fact42_10_id = egraph.add_expr(&fact42_10_expr);
+ egraph.union(fact42_10_id, true_id);
+let fact42_7_str = "(> (+ c3 c0) 0)";
+ let fact42_7_expr = HalideExpr.parse_expr(fact42_7_str).unwrap();
+ let fact42_7_id = egraph.add_expr(&fact42_7_expr);
+ egraph.union(fact42_7_id, true_id);
+let fact42_6_str = "(> (+ c0 c3) 0)";
+ let fact42_6_expr = HalideExpr.parse_expr(fact42_6_str).unwrap();
+ let fact42_6_id = egraph.add_expr(&fact42_6_expr);
+ egraph.union(fact42_6_id, true_id);
+let fact42_0_str = "(> (+ c2 c3) 0)";
+ let fact42_0_expr = HalideExpr.parse_expr(fact42_0_str).unwrap();
+ let fact42_0_id = egraph.add_expr(&fact42_0_expr);
+ egraph.union(fact42_0_id, true_id);
+let fact42_3_str = "(> (+ c3 c1) 0)";
+ let fact42_3_expr = HalideExpr.parse_expr(fact42_3_str).unwrap();
+ let fact42_3_id = egraph.add_expr(&fact42_3_expr);
+ egraph.union(fact42_3_id, true_id);
+let fact42_9_str = "(> (+ c2 c0) 0)";
+ let fact42_9_expr = HalideExpr.parse_expr(fact42_9_str).unwrap();
+ let fact42_9_id = egraph.add_expr(&fact42_9_expr);
+ egraph.union(fact42_9_id, true_id);
+let fact42_2_str = "(> (+ c1 c3) 0)";
+ let fact42_2_expr = HalideExpr.parse_expr(fact42_2_str).unwrap();
+ let fact42_2_id = egraph.add_expr(&fact42_2_expr);
+ egraph.union(fact42_2_id, true_id);
+let fact42_5_str = "(> (+ c2 c1) 0)";
+ let fact42_5_expr = HalideExpr.parse_expr(fact42_5_str).unwrap();
+ let fact42_5_id = egraph.add_expr(&fact42_5_expr);
+ egraph.union(fact42_5_id, true_id);
+let fact42_4_str = "(> (+ c1 c2) 0)";
+ let fact42_4_expr = HalideExpr.parse_expr(fact42_4_str).unwrap();
+ let fact42_4_id = egraph.add_expr(&fact42_4_expr);
+ egraph.union(fact42_4_id, true_id);
+let fact42_1_str = "(> (+ c3 c2) 0)";
+ let fact42_1_expr = HalideExpr.parse_expr(fact42_1_str).unwrap();
+ let fact42_1_id = egraph.add_expr(&fact42_1_expr);
+ egraph.union(fact42_1_id, true_id);
+let fact43_1_str = "(and (and (= (mod c1 c3) 0) (> c3 0)) (!= (div c1 c3) 0))";
+ let fact43_1_expr = HalideExpr.parse_expr(fact43_1_str).unwrap();
+ let fact43_1_id = egraph.add_expr(&fact43_1_expr);
+ egraph.union(fact43_1_id, true_id);
+let fact43_0_str = "(and (and (= (mod c2 c3) 0) (> c3 0)) (!= (div c2 c3) 0))";
+ let fact43_0_expr = HalideExpr.parse_expr(fact43_0_str).unwrap();
+ let fact43_0_id = egraph.add_expr(&fact43_0_expr);
+ egraph.union(fact43_0_id, true_id);
+let fact43_2_str = "(and (and (= (mod c0 c3) 0) (> c3 0)) (!= (div c0 c3) 0))";
+ let fact43_2_expr = HalideExpr.parse_expr(fact43_2_str).unwrap();
+ let fact43_2_id = egraph.add_expr(&fact43_2_expr);
+ egraph.union(fact43_2_id, true_id);
+
+
+ println!("After adding all facts about constants, egraph size {}", egraph.total_size());
 
   for r in rules {
     r.run(&mut egraph);
@@ -1858,5 +2598,8 @@ let condrules = vec![
   if equivs.is_empty() {
     panic!("Couldn't prove equivalence {}: {}", start, goal);
   }
+
 }
+
+
 
